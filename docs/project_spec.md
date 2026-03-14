@@ -33,7 +33,7 @@ Manages wallets, expense/income categories, and transactions (expense, income, t
 | Database      | Postgres via Supabase                                                                                                                   |
 | Auth          | JWT (single user in DB)                                                                                                                 |
 | AI Model      | OpenAI API (`gpt-4o-mini`) via LangChain                                                                                                |
-| Logging       | Pino via `nestjs-pino`                                                                                                                  |
+| Logging       | Backend: Pino via `nestjs-pino`; Frontend: Sentry (error tracking & session replay)                                                     |
 | Reverse proxy | Caddy (auto HTTPS, routing for backend & AI service)                                                                                    |
 | E2E Testing   | Playwright (browser automation & end-to-end testing)                                                                                    |
 | Deployment    | Frontend: Netlify; Backend + AI service: Docker Compose on VPS                                                                          |
@@ -53,7 +53,36 @@ All list views (wallets, categories, transactions) render as sortable data table
 **Mobile/tablet view — cards:**
 List items render as cards following modern mobile conventions (e.g., name prominent, secondary details below, action buttons accessible via tap). The same client-side vs. server-side data handling rules apply.
 
-### 2.5. E2E Testing Strategy
+### 2.5. Logging & Error Tracking
+
+**Frontend Logging:** Sentry for error tracking, performance monitoring, and session replay.
+
+**Setup:**
+- Initialize Sentry in `src/main.tsx` with DSN from environment variables
+- Capture unhandled errors, promise rejections, and console errors automatically
+- Attach user context (user ID once authenticated) to all events
+- Sample rate: 100% for errors, 10% for performance transactions (can be adjusted)
+
+**Configuration:**
+```typescript
+// src/main.tsx
+import * as Sentry from "@sentry/react";
+
+Sentry.init({
+  dsn: import.meta.env.VITE_SENTRY_DSN,
+  environment: import.meta.env.MODE,
+  tracesSampleRate: 0.1,
+  replaysSessionSampleRate: 0.1,
+  integrations: [
+    new Sentry.Replay(),
+    new Sentry.CaptureConsole({ levels: ['error', 'warn'] }),
+  ],
+});
+```
+
+**Backend Logging:** Pino with structured JSON logging (see section 7 for format details).
+
+### 2.6. E2E Testing Strategy
 
 **Framework:** Playwright for cross-browser testing (Chromium, Firefox, WebKit).
 
@@ -112,6 +141,13 @@ Browser (Netlify) → Caddy (VPS) → NestJS (/api/v1/ai/chat)
                                              ← structured transaction object
                                        ← confirmation card shown to user
 User confirms → NestJS creates transaction (standard flow)
+```
+
+**Error tracking flow:**
+
+```
+Browser (Netlify) → Sentry (errors, performance data, session replays)
+Backend (NestJS)  → Pino (structured JSON logs)
 ```
 
 ### 4. Project Structure

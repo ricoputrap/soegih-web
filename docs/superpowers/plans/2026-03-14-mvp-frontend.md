@@ -18,7 +18,7 @@
 - Modify: `package.json`
 - Modify: `vite.config.ts`
 
-- [ ] **Step 1: Install runtime dependencies**
+- [x] **Step 1: Install runtime dependencies**
 
 ```bash
 pnpm add @tanstack/react-router @tanstack/react-query @tanstack/react-table
@@ -27,7 +27,7 @@ pnpm add axios recharts
 pnpm add @sentry/react
 ```
 
-- [ ] **Step 2: Install dev dependencies**
+- [x] **Step 2: Install dev dependencies**
 
 ```bash
 pnpm add -D @tanstack/router-plugin vitest @testing-library/react @testing-library/jest-dom jsdom
@@ -35,7 +35,7 @@ pnpm add -D @playwright/test
 pnpm exec playwright install
 ```
 
-- [ ] **Step 3: Update `vite.config.ts` with router plugin and test config**
+- [x] **Step 3: Update `vite.config.ts` with router plugin and test config**
 
 The project already uses `@rolldown/plugin-babel` + `reactCompilerPreset` (both installed in `package.json`). Add `tanstackRouter` before `react()` and append the `test` block:
 
@@ -60,21 +60,21 @@ export default defineConfig({
 })
 ```
 
-- [ ] **Step 4: Create test setup file**
+- [x] **Step 4: Create test setup file**
 
 ```typescript
 // src/test-setup.ts
 import '@testing-library/jest-dom'
 ```
 
-- [ ] **Step 5: Add test script to `package.json` scripts**
+- [x] **Step 5: Add test script to `package.json` scripts**
 
 ```json
 "test": "vitest run",
 "test:watch": "vitest"
 ```
 
-- [ ] **Step 6: Verify Vite starts without errors**
+- [x] **Step 6: Verify Vite starts without errors**
 
 ```bash
 pnpm dev
@@ -82,7 +82,7 @@ pnpm dev
 
 Expected: Dev server starts on localhost:5173
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add vite.config.ts package.json src/test-setup.ts pnpm-lock.yaml
@@ -97,14 +97,14 @@ git commit -m "chore(setup): install all MVP dependencies and configure vite"
 - Create: `src/shared/lib/api-client.ts`
 - Create: `.env.example`
 
-- [ ] **Step 1: Create `.env.example`**
+- [x] **Step 1: Create `.env.example`**
 
 ```bash
 VITE_API_BASE_URL=http://localhost:3000
 VITE_SENTRY_DSN=
 ```
 
-- [ ] **Step 2: Write test for api-client token attachment**
+- [x] **Step 2: Write test for api-client token attachment**
 
 ```typescript
 // src/shared/lib/api-client.test.ts
@@ -131,7 +131,7 @@ describe('api-client', () => {
 })
 ```
 
-- [ ] **Step 3: Run test — expect FAIL**
+- [x] **Step 3: Run test — expect FAIL**
 
 ```bash
 pnpm test
@@ -139,7 +139,7 @@ pnpm test
 
 Expected: FAIL — `api-client` module not found
 
-- [ ] **Step 4: Implement `api-client.ts`**
+- [x] **Step 4: Implement `api-client.ts`**
 
 ```typescript
 // src/shared/lib/api-client.ts
@@ -159,13 +159,13 @@ export function clearAuthToken(): void {
 }
 ```
 
-- [ ] **Step 5: Run test — expect PASS**
+- [x] **Step 5: Run test — expect PASS**
 
 ```bash
 pnpm test
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/shared/lib/api-client.ts src/shared/lib/api-client.test.ts .env.example

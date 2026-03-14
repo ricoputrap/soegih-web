@@ -32,7 +32,7 @@ Manages wallets, expense/income categories, and transactions (expense, income, t
 | ORM           | Prisma                                                                                                                                                                                      |
 | Database      | Postgres via Supabase                                                                                                                                                                       |
 | Auth          | Supabase Auth (email/password signup & login, JWT session management)                                                                                                                       |
-| AI Model      | OpenAI API (`gpt-4o-mini`) via LangChain; **Note:** Deprecated (retiring Azure support by March 31, 2026)                                                                                                                                                    |
+| AI Model      | Google Gemini API (`gemini-2.0-flash`) via google.generativeai SDK; Cost-optimized for MVP (<100 users)                                                                                                                                                     |
 | Logging       | Backend: Pino via `nestjs-pino`; Frontend: Sentry (error tracking & session replay)                                                                                                         |
 | Reverse proxy | Caddy (auto HTTPS, routing for backend & AI service)                                                                                                                                        |
 | E2E Testing   | Playwright (browser automation & end-to-end testing)                                                                                                                                        |
@@ -247,18 +247,32 @@ function clearUserContext() {
 
 **Backend Logging:** Pino with structured JSON logging (see section 7 for format details).
 
-### 2.5.1 AI Model Deprecation Note
+### 2.5.1 AI Model Selection: Gemini 2.0 Flash
 
-⚠️ **Important:** `gpt-4o-mini` is being deprecated by OpenAI:
-- ChatGPT support ended: February 13, 2026
-- Azure support ends: March 31, 2026
-- OpenAI API: Still available but may be sunset in the future
+**Selected Model:** Google Gemini 2.0 Flash (released February 2025)
 
-**Migration Strategy:**
-- Current codebase uses `gpt-4o-mini` for cost efficiency
-- When deprecation deadline approaches, migrate to latest available model (e.g., `gpt-4o` or successor)
-- Update model name in `soegih-ai` service and LangChain configuration
-- Test thoroughly to ensure functionality is preserved
+**Rationale:**
+- **Cost:** $0.10 input / $0.40 output per million tokens (~$0.15-0.30/month for MVP)
+- **Speed:** <300ms response time (excellent UX for chat interface)
+- **Capability:** Optimized for cost/performance; sufficient for transaction parsing
+- **Future flexibility:** Easy to swap to alternative models (Claude Haiku, Gemini Flash Pro) if needed
+
+**Implementation:**
+- SDK: `google.generativeai` Python library
+- Model name: `gemini-2.0-flash`
+- Integration point: `soegih-ai` FastAPI service (replaces LangChain/OpenAI setup)
+- API authentication: `GOOGLE_API_KEY` environment variable
+
+**Monitoring & Optimization:**
+- Track accuracy metrics: category assignment errors, amount parsing failures
+- Monitor latency: target <1s p95 for chat responses
+- Monitor costs: daily/weekly spend reports via Google Cloud Console
+- If accuracy issues arise: evaluate alternatives (Claude Haiku 4.5 or Gemini 2.0 Flash Pro)
+
+**Upgrade Path (if scaling beyond MVP):**
+- **100-1K users:** Stay on Flash (~$0.15-0.30/month, no change needed)
+- **1K-10K users:** Consider Gemini 2.0 Pro (~$1.50-3.00/month) for higher accuracy
+- **10K+ users:** Evaluate multi-model strategy or Claude Sonnet for better domain accuracy
 
 ### 2.6. E2E Testing Strategy
 

@@ -85,11 +85,11 @@ User confirms → NestJS creates transaction (standard flow)
 
 The project is organized as a **polyrepo**: each service lives in its own independent repository.
 
-| Repo         | Description               | Deployment            |
-| ------------ | ------------------------- | --------------------- |
-| `soegih-web` | React + Vite frontend     | Netlify               |
-| `soegih-api` | NestJS backend            | Docker Compose on VPS |
-| `soegih-ai`  | Python FastAPI AI service | Docker Compose on VPS |
+| Repo             | Description               | Deployment            |
+| ---------------- | ------------------------- | --------------------- |
+| `soegih-web`     | React + Vite frontend     | Netlify               |
+| `soegih-backend` | NestJS backend            | Docker Compose on VPS |
+| `soegih-ai`      | Python FastAPI AI service | Docker Compose on VPS |
 
 **`soegih-web` (this repo) — React + Vite:**
 
@@ -112,10 +112,10 @@ soegih-web/
 └── ...
 ```
 
-**`soegih-api` — NestJS:**
+**`soegih-backend` — NestJS:**
 
 ```
-soegih-api/
+soegih-backend/
 ├── src/
 │   ├── modules/               # feature modules: wallet, category, transaction, auth, ai
 │   ├── prisma/                # Prisma schema + migrations
@@ -134,7 +134,7 @@ soegih-ai/
 └── ...
 ```
 
-**VPS deployment** (`soegih-api` + `soegih-ai` share a Docker Compose setup):
+**VPS deployment** (`soegih-backend` + `soegih-ai` share a Docker Compose setup):
 Docker Compose containers: `caddy`, `backend` (NestJS), `ai` (FastAPI). Caddy handles HTTPS and routes traffic between backend and AI service.
 
 ### 5. Data Schema

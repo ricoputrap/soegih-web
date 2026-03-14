@@ -310,7 +310,7 @@ git commit -m "feat(setup): scaffold TanStack Router file-based routing"
 **Files:**
 - Modify: `src/main.tsx`
 
-- [ ] **Step 1: Initialize Sentry in `main.tsx`**
+- [x] **Step 1: Initialize Sentry in `main.tsx`**
 
 ```typescript
 // Add at the top of src/main.tsx, before other imports
@@ -329,13 +329,13 @@ Sentry.init({
 })
 ```
 
-- [ ] **Step 2: Verify dev server still starts**
+- [x] **Step 2: Verify dev server still starts**
 
 ```bash
 pnpm dev
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/main.tsx

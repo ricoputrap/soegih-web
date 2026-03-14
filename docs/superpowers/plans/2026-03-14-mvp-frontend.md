@@ -186,7 +186,7 @@ git commit -m "feat(setup): add axios api client with JWT token management"
 - Modify: `src/main.tsx`
 - Delete: `src/App.tsx`, `src/App.css`
 
-- [ ] **Step 1: Create root route with QueryClientProvider**
+- [x] **Step 1: Create root route with QueryClientProvider**
 
 ```typescript
 // src/routes/__root.tsx
@@ -204,7 +204,7 @@ export const Route = createRootRoute({
 })
 ```
 
-- [ ] **Step 2: Create index route (redirect to dashboard)**
+- [x] **Step 2: Create index route (redirect to dashboard)**
 
 ```typescript
 // src/routes/index.tsx
@@ -217,7 +217,7 @@ export const Route = createFileRoute('/')({
 })
 ```
 
-- [ ] **Step 3: Create login route (placeholder)**
+- [x] **Step 3: Create login route (placeholder)**
 
 ```typescript
 // src/routes/login.tsx
@@ -228,7 +228,7 @@ export const Route = createFileRoute('/login')({
 })
 ```
 
-- [ ] **Step 4: Create signup route (placeholder)**
+- [x] **Step 4: Create signup route (placeholder)**
 
 ```typescript
 // src/routes/signup.tsx
@@ -239,7 +239,7 @@ export const Route = createFileRoute('/signup')({
 })
 ```
 
-- [ ] **Step 5: Create auth layout route (placeholder guard)**
+- [x] **Step 5: Create auth layout route (placeholder guard)**
 
 ```typescript
 // src/routes/_auth.tsx
@@ -250,7 +250,7 @@ export const Route = createFileRoute('/_auth')({
 })
 ```
 
-- [ ] **Step 6: Create dashboard route (placeholder)**
+- [x] **Step 6: Create dashboard route (placeholder)**
 
 ```typescript
 // src/routes/_auth/dashboard.tsx
@@ -261,7 +261,7 @@ export const Route = createFileRoute('/_auth/dashboard')({
 })
 ```
 
-- [ ] **Step 7: Update `main.tsx`**
+- [x] **Step 7: Update `main.tsx`**
 
 ```typescript
 // src/main.tsx
@@ -286,9 +286,9 @@ createRoot(document.getElementById('root')!).render(
 )
 ```
 
-- [ ] **Step 8: Delete `src/App.tsx` and `src/App.css`**
+- [x] **Step 8: Delete `src/App.tsx` and `src/App.css`**
 
-- [ ] **Step 9: Run dev server, verify routing works**
+- [x] **Step 9: Run dev server, verify routing works**
 
 ```bash
 pnpm dev
@@ -296,7 +296,7 @@ pnpm dev
 
 Navigate to `/` → should redirect to `/dashboard`. Navigate to `/login` → login placeholder.
 
-- [ ] **Step 10: Commit**
+- [x] **Step 10: Commit**
 
 ```bash
 git add src/routes/ src/main.tsx src/routeTree.gen.ts src/index.css

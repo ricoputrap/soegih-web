@@ -24,19 +24,19 @@ Manages wallets, expense/income categories, and transactions (expense, income, t
 
 ### 1. Tech Stack
 
-| Layer         | Choice                                                                                                                                  |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Frontend      | React + Vite (CSR), deployed on Netlify; TanStack Router (file-based); TanStack Table for data tables; TanStack Query for data fetching |
-| Backend       | NestJS + TypeScript                                                                                                                     |
-| AI Service    | Python FastAPI + LangChain                                                                                                              |
-| ORM           | Prisma                                                                                                                                  |
-| Database      | Postgres via Supabase                                                                                                                   |
-| Auth          | Supabase Auth (email/password signup & login, JWT session management)                                                                    |
-| AI Model      | OpenAI API (`gpt-4o-mini`) via LangChain                                                                                                |
-| Logging       | Backend: Pino via `nestjs-pino`; Frontend: Sentry (error tracking & session replay)                                                     |
-| Reverse proxy | Caddy (auto HTTPS, routing for backend & AI service)                                                                                    |
-| E2E Testing   | Playwright (browser automation & end-to-end testing)                                                                                    |
-| Deployment    | Frontend: Netlify; Backend + AI service: Docker Compose on VPS                                                                          |
+| Layer         | Choice                                                                                                                                                                                      |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Frontend      | React + Vite (CSR), deployed on Netlify; TanStack Router (file-based); TanStack Table for data tables; TanStack Query for data fetching; React Hook Form + Zod (form handling & validation) |
+| Backend       | NestJS + TypeScript                                                                                                                                                                         |
+| AI Service    | Python FastAPI + LangChain                                                                                                                                                                  |
+| ORM           | Prisma                                                                                                                                                                                      |
+| Database      | Postgres via Supabase                                                                                                                                                                       |
+| Auth          | Supabase Auth (email/password signup & login, JWT session management)                                                                                                                       |
+| AI Model      | OpenAI API (`gpt-4o-mini`) via LangChain                                                                                                                                                    |
+| Logging       | Backend: Pino via `nestjs-pino`; Frontend: Sentry (error tracking & session replay)                                                                                                         |
+| Reverse proxy | Caddy (auto HTTPS, routing for backend & AI service)                                                                                                                                        |
+| E2E Testing   | Playwright (browser automation & end-to-end testing)                                                                                                                                        |
+| Deployment    | Frontend: Netlify; Backend + AI service: Docker Compose on VPS                                                                                                                              |
 
 ### 2. UI/UX Design Principles
 
@@ -52,6 +52,86 @@ All list views (wallets, categories, transactions) render as sortable data table
 
 **Mobile/tablet view — cards:**
 List items render as cards following modern mobile conventions (e.g., name prominent, secondary details below, action buttons accessible via tap). The same client-side vs. server-side data handling rules apply.
+
+### 2.3. Form Handling & Validation Strategy
+
+**Library:** React Hook Form + Zod for all forms across the application.
+
+**Rationale:**
+
+- React Hook Form provides minimal bundle size (~8KB), zero dependencies, and excellent performance with selective re-renders
+- Zod enables type-safe schema validation that mirrors TypeScript types, reducing duplication between validation logic and type definitions
+- Together they provide straightforward DX for simple forms (auth, wallet/category CRUD) while supporting medium complexity (transaction entry with conditional fields)
+
+**Usage pattern:**
+
+All forms follow this structure:
+
+1. Define a Zod schema that describes form shape, validation rules, and constraints
+2. Use `useForm()` hook with `zodResolver()` to integrate schema validation
+3. Register fields and handle submission
+4. Display field-level errors from validation state
+
+**Example: Wallet creation form**
+
+```typescript
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+const walletSchema = z.object({
+  name: z.string().min(1, 'Wallet name is required'),
+  type: z.enum(['cash', 'bank', 'e_wallet', 'other']),
+  balance: z.number().min(0, 'Balance cannot be negative'),
+})
+
+type WalletFormData = z.infer<typeof walletSchema>
+
+function CreateWalletForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<WalletFormData>({
+    resolver: zodResolver(walletSchema),
+    mode: 'onChange',
+  })
+
+  const onSubmit = async (data: WalletFormData) => {
+    await api.post('/api/v1/wallets', data)
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register('name')} placeholder="Wallet name" />
+      {errors.name && <p>{errors.name.message}</p>}
+
+      <select {...register('type')}>
+        <option value="cash">Cash</option>
+        <option value="bank">Bank</option>
+        <option value="e_wallet">E-Wallet</option>
+        <option value="other">Other</option>
+      </select>
+      {errors.type && <p>{errors.type.message}</p>}
+
+      <input {...register('balance', { valueAsNumber: true })} type="number" />
+      {errors.balance && <p>{errors.balance.message}</p>}
+
+      <button type="submit" disabled={isSubmitting}>
+        Create Wallet
+      </button>
+    </form>
+  )
+}
+```
+
+**Validation modes:**
+
+- Use `mode: 'onChange'` for real-time validation feedback (preferred for UX)
+- Use `mode: 'onBlur'` for async validation (e.g., username availability checks)
+- Use `mode: 'onSubmit'` (default) for validation only on submission
+
+**Async validation:** For checks like wallet name uniqueness, use `onBlurAsync` validators or handle validation on the backend and surface field errors in the response.
 
 ### 2.4. Authentication Strategy
 
@@ -82,6 +162,7 @@ Frontend → Authorization: Bearer <token> → NestJS JWT guard
 ```
 
 **Frontend responsibilities:**
+
 - Call backend `/api/v1/auth/signup` with email & password
 - Call backend `/api/v1/auth/login` with email & password
 - Store returned JWT token securely (localStorage or context)
@@ -90,6 +171,7 @@ Frontend → Authorization: Bearer <token> → NestJS JWT guard
 - Logout: call `/api/v1/auth/logout`, clear stored token
 
 **Backend (`NestJS` + Supabase Auth SDK):**
+
 - **Signup endpoint** (`POST /api/v1/auth/signup`):
   - Validate input (email format, password strength)
   - Call Supabase Auth: `supabase.auth.admin.createUser({ email, password })`
@@ -112,6 +194,7 @@ Frontend → Authorization: Bearer <token> → NestJS JWT guard
   - Scope all database queries by `user_id`
 
 **Benefits of this approach:**
+
 - Audit trail of all auth events (signup, login, logout)
 - User profile sync: local `users` table stays in sync with Supabase
 - Post-login hooks: send welcome emails, initialize user settings, etc.
@@ -124,12 +207,14 @@ Frontend → Authorization: Bearer <token> → NestJS JWT guard
 **Frontend Logging:** Sentry for error tracking, performance monitoring, and session replay.
 
 **Setup:**
+
 - Initialize Sentry in `src/main.tsx` with DSN from environment variables
 - Capture unhandled errors, promise rejections, and console errors automatically
 - Attach user context (user ID once authenticated) to all events
 - Sample rate: 100% for errors, 10% for performance transactions (can be adjusted)
 
 **Configuration:**
+
 ```typescript
 // src/main.tsx
 import * as Sentry from "@sentry/react";
@@ -141,7 +226,7 @@ Sentry.init({
   replaysSessionSampleRate: 0.1,
   integrations: [
     new Sentry.Replay(),
-    new Sentry.CaptureConsole({ levels: ['error', 'warn'] }),
+    new Sentry.CaptureConsole({ levels: ["error", "warn"] }),
   ],
 });
 ```
@@ -153,6 +238,7 @@ Sentry.init({
 **Framework:** Playwright for cross-browser testing (Chromium, Firefox, WebKit).
 
 **Test Coverage:** Critical user flows including:
+
 - Authentication (login/logout)
 - Wallet CRUD operations
 - Category creation and management
@@ -161,11 +247,13 @@ Sentry.init({
 - AI chat interface (if integrated)
 
 **Test Organization:**
+
 - Tests organized by feature module (e.g., `wallet.spec.ts`, `transaction.spec.ts`)
 - Shared test fixtures in `e2e/fixtures/` for auth, API mocking, and data setup
 - Tests run against a local dev environment or dedicated test instance
 
 **Running E2E Tests:**
+
 ```bash
 # Run all tests
 pnpm exec playwright test

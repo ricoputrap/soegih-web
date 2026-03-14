@@ -35,6 +35,7 @@ Manages wallets, expense/income categories, and transactions (expense, income, t
 | AI Model      | OpenAI API (`gpt-4o-mini`) via LangChain                                                                                                |
 | Logging       | Pino via `nestjs-pino`                                                                                                                  |
 | Reverse proxy | Caddy (auto HTTPS, routing for backend & AI service)                                                                                    |
+| E2E Testing   | Playwright (browser automation & end-to-end testing)                                                                                    |
 | Deployment    | Frontend: Netlify; Backend + AI service: Docker Compose on VPS                                                                          |
 
 ### 2. UI/UX Design Principles
@@ -51,6 +52,38 @@ All list views (wallets, categories, transactions) render as sortable data table
 
 **Mobile/tablet view — cards:**
 List items render as cards following modern mobile conventions (e.g., name prominent, secondary details below, action buttons accessible via tap). The same client-side vs. server-side data handling rules apply.
+
+### 2.5. E2E Testing Strategy
+
+**Framework:** Playwright for cross-browser testing (Chromium, Firefox, WebKit).
+
+**Test Coverage:** Critical user flows including:
+- Authentication (login/logout)
+- Wallet CRUD operations
+- Category creation and management
+- Transaction entry and search
+- Dashboard metrics visibility
+- AI chat interface (if integrated)
+
+**Test Organization:**
+- Tests organized by feature module (e.g., `wallet.spec.ts`, `transaction.spec.ts`)
+- Shared test fixtures in `e2e/fixtures/` for auth, API mocking, and data setup
+- Tests run against a local dev environment or dedicated test instance
+
+**Running E2E Tests:**
+```bash
+# Run all tests
+pnpm exec playwright test
+
+# Run tests in headed mode (visible browser)
+pnpm exec playwright test --headed
+
+# Run specific test file
+pnpm exec playwright test e2e/wallet.spec.ts
+
+# Debug mode
+pnpm exec playwright test --debug
+```
 
 ---
 
@@ -108,6 +141,14 @@ soegih-web/
 │   │   └── ai/
 │   ├── shared/                # shared components, hooks, utils, types
 │   └── assets/
+├── e2e/                       # Playwright E2E tests
+│   ├── fixtures/              # test fixtures and helpers
+│   ├── wallet.spec.ts         # wallet feature tests
+│   ├── category.spec.ts       # category feature tests
+│   ├── transaction.spec.ts    # transaction feature tests
+│   ├── dashboard.spec.ts      # dashboard feature tests
+│   └── auth.spec.ts           # authentication flow tests
+├── playwright.config.ts
 ├── netlify.toml
 └── ...
 ```

@@ -55,32 +55,69 @@ List items render as cards following modern mobile conventions (e.g., name promi
 
 ### 2.4. Authentication Strategy
 
-**Provider:** Supabase Auth (email/password authentication).
+**Architecture:** Backend relay pattern. Supabase Auth powers authentication; backend controls auth flow and user profile management.
 
-**Frontend:**
-- Use `@supabase/supabase-js` SDK for auth operations
-- Sign up endpoint: `supabase.auth.signUp({ email, password })`
-- Sign in endpoint: `supabase.auth.signInWithPassword({ email, password })`
-- Store session token in secure context (not localStorage for sensitive apps)
-- Attach JWT token to API requests via `Authorization: Bearer <token>` header
-- Handle token refresh automatically (Supabase SDK manages this)
+**Auth Flow:**
 
-**Backend:**
-- Verify JWT tokens issued by Supabase
-- Extract `user_id` (Supabase UUID) from token claims
-- Create user record in `users` table on first signup (or synced via Supabase webhook)
-- Use `user_id` to scope all data queries (wallet, category, transaction)
+```
+Frontend (React) → NestJS Backend (/api/v1/auth/signup, /api/v1/auth/login)
+                       ↓
+                  NestJS calls Supabase Auth SDK
+                       ↓
+                  Supabase returns JWT session token
+                       ↓
+                  NestJS creates/syncs user record in local users table
+                  NestJS logs auth event
+                       ↓
+                  NestJS returns JWT to frontend
+                       ↓
+Frontend stores token in secure context (localStorage or in-memory)
 
-**User onboarding:**
-1. User lands on app → redirected to signup/login page
-2. User enters email & password → calls Supabase signup/login
-3. On success: redirect to dashboard, initialize app with authenticated user context
-4. On failure: display error message (account exists, invalid credentials, etc.)
+Subsequent API requests:
+Frontend → Authorization: Bearer <token> → NestJS JWT guard
+                                                ↓
+                                    Verify token with Supabase public key
+                                    Extract user_id from claims
+                                    Scope all queries by user_id
+```
 
-**Session management:**
-- Supabase automatically refreshes tokens before expiry
-- Logout: clear session from Supabase and local context
-- If token invalid: redirect to login
+**Frontend responsibilities:**
+- Call backend `/api/v1/auth/signup` with email & password
+- Call backend `/api/v1/auth/login` with email & password
+- Store returned JWT token securely (localStorage or context)
+- Attach JWT to all subsequent API requests: `Authorization: Bearer <token>`
+- Handle token refresh (backend can issue refresh tokens or frontend can re-login)
+- Logout: call `/api/v1/auth/logout`, clear stored token
+
+**Backend (`NestJS` + Supabase Auth SDK):**
+- **Signup endpoint** (`POST /api/v1/auth/signup`):
+  - Validate input (email format, password strength)
+  - Call Supabase Auth: `supabase.auth.admin.createUser({ email, password })`
+  - Create corresponding record in local `users` table with Supabase `user_id`
+  - Log auth event: "user_signed_up"
+  - Return JWT and user profile to frontend
+- **Login endpoint** (`POST /api/v1/auth/login`):
+  - Validate input
+  - Call Supabase Auth: `supabase.auth.admin.signInWithPassword({ email, password })`
+  - Verify user exists in local `users` table; create if missing (sync)
+  - Log auth event: "user_logged_in"
+  - Return JWT to frontend
+- **Logout endpoint** (`POST /api/v1/auth/logout`):
+  - Log auth event: "user_logged_out"
+  - Return success (token invalidation handled on frontend)
+- **JWT Verification** (all protected endpoints):
+  - Verify JWT signature using Supabase public key
+  - Extract `user_id` from claims
+  - Attach to request context for downstream services
+  - Scope all database queries by `user_id`
+
+**Benefits of this approach:**
+- Audit trail of all auth events (signup, login, logout)
+- User profile sync: local `users` table stays in sync with Supabase
+- Post-login hooks: send welcome emails, initialize user settings, etc.
+- Single source of truth for user metadata (stored locally)
+- Easier to migrate away from Supabase if needed
+- Control over auth flow and rate limiting
 
 ### 2.5. Logging & Error Tracking
 
@@ -157,10 +194,12 @@ Browser (Netlify) → Caddy (VPS) → NestJS (/api/v1/...) → Prisma → Supaba
 **Auth flow:**
 
 ```
-User signup/login → Supabase Auth (email/password verification)
-                  ← Supabase returns session token (JWT)
-Browser stores session token in secure storage or context
-Subsequent API requests: Authorization: Bearer <token> header → NestJS verifies with Supabase → allows request
+Browser (Netlify) → Caddy (VPS) → NestJS (/api/v1/auth/signup or /api/v1/auth/login)
+                                       → Supabase Auth (via SDK)
+                                       ← JWT session token
+                                   ← Create/sync user in local DB
+Browser stores JWT token in secure context
+Subsequent requests: Authorization: Bearer <token> header → NestJS verifies token → allows request
 ```
 
 **AI chat flow:**

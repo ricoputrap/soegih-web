@@ -31,7 +31,7 @@ Manages wallets, expense/income categories, and transactions (expense, income, t
 | AI Service    | Python FastAPI + LangChain                                                                                                              |
 | ORM           | Prisma                                                                                                                                  |
 | Database      | Postgres via Supabase                                                                                                                   |
-| Auth          | JWT (single user in DB)                                                                                                                 |
+| Auth          | Supabase Auth (email/password signup & login, JWT session management)                                                                    |
 | AI Model      | OpenAI API (`gpt-4o-mini`) via LangChain                                                                                                |
 | Logging       | Backend: Pino via `nestjs-pino`; Frontend: Sentry (error tracking & session replay)                                                     |
 | Reverse proxy | Caddy (auto HTTPS, routing for backend & AI service)                                                                                    |
@@ -52,6 +52,35 @@ All list views (wallets, categories, transactions) render as sortable data table
 
 **Mobile/tablet view — cards:**
 List items render as cards following modern mobile conventions (e.g., name prominent, secondary details below, action buttons accessible via tap). The same client-side vs. server-side data handling rules apply.
+
+### 2.4. Authentication Strategy
+
+**Provider:** Supabase Auth (email/password authentication).
+
+**Frontend:**
+- Use `@supabase/supabase-js` SDK for auth operations
+- Sign up endpoint: `supabase.auth.signUp({ email, password })`
+- Sign in endpoint: `supabase.auth.signInWithPassword({ email, password })`
+- Store session token in secure context (not localStorage for sensitive apps)
+- Attach JWT token to API requests via `Authorization: Bearer <token>` header
+- Handle token refresh automatically (Supabase SDK manages this)
+
+**Backend:**
+- Verify JWT tokens issued by Supabase
+- Extract `user_id` (Supabase UUID) from token claims
+- Create user record in `users` table on first signup (or synced via Supabase webhook)
+- Use `user_id` to scope all data queries (wallet, category, transaction)
+
+**User onboarding:**
+1. User lands on app → redirected to signup/login page
+2. User enters email & password → calls Supabase signup/login
+3. On success: redirect to dashboard, initialize app with authenticated user context
+4. On failure: display error message (account exists, invalid credentials, etc.)
+
+**Session management:**
+- Supabase automatically refreshes tokens before expiry
+- Logout: clear session from Supabase and local context
+- If token invalid: redirect to login
 
 ### 2.5. Logging & Error Tracking
 
@@ -128,8 +157,10 @@ Browser (Netlify) → Caddy (VPS) → NestJS (/api/v1/...) → Prisma → Supaba
 **Auth flow:**
 
 ```
-POST /api/v1/auth/login → NestJS validates credentials → returns JWT
-Subsequent requests: Authorization: Bearer <token> header → NestJS JWT guard
+User signup/login → Supabase Auth (email/password verification)
+                  ← Supabase returns session token (JWT)
+Browser stores session token in secure storage or context
+Subsequent API requests: Authorization: Bearer <token> header → NestJS verifies with Supabase → allows request
 ```
 
 **AI chat flow:**
@@ -218,9 +249,8 @@ Docker Compose containers: `caddy`, `backend` (NestJS), `ai` (FastAPI). Caddy ha
 
 ```
 users
-- id:            uuid (PK)
-- email:         string (unique)
-- password_hash: string
+- id:         uuid (PK, references Supabase Auth user ID)
+- email:      string (denormalized from Supabase Auth, unique)
 - created_at, updated_at, deleted_at
 
 wallet
@@ -273,8 +303,10 @@ All endpoints are prefixed with `/api/v1/`. `PATCH` is used for partial updates.
 
 ```
 Auth
-POST   /api/v1/auth/login
-POST   /api/v1/auth/logout
+POST   /api/v1/auth/signup              -- Supabase signup (email, password)
+POST   /api/v1/auth/login               -- Supabase login (email, password)
+POST   /api/v1/auth/logout              -- Clear session
+GET    /api/v1/auth/me                  -- Get current user (requires valid token)
 
 Wallets
 GET    /api/v1/wallets

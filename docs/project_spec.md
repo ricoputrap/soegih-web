@@ -32,7 +32,7 @@ Manages wallets, expense/income categories, and transactions (expense, income, t
 | ORM           | Prisma                                                                                                                                                                                      |
 | Database      | Postgres via Supabase                                                                                                                                                                       |
 | Auth          | Supabase Auth (email/password signup & login, JWT session management)                                                                                                                       |
-| AI Model      | OpenAI API (`gpt-4o-mini`) via LangChain                                                                                                                                                    |
+| AI Model      | OpenAI API (`gpt-4o-mini`) via LangChain; **Note:** Deprecated (retiring Azure support by March 31, 2026)                                                                                                                                                    |
 | Logging       | Backend: Pino via `nestjs-pino`; Frontend: Sentry (error tracking & session replay)                                                                                                         |
 | Reverse proxy | Caddy (auto HTTPS, routing for backend & AI service)                                                                                                                                        |
 | E2E Testing   | Playwright (browser automation & end-to-end testing)                                                                                                                                        |
@@ -209,9 +209,12 @@ Frontend → Authorization: Bearer <token> → NestJS JWT guard
 **Setup:**
 
 - Initialize Sentry in `src/main.tsx` with DSN from environment variables
-- Capture unhandled errors, promise rejections, and console errors automatically
-- Attach user context (user ID once authenticated) to all events
-- Sample rate: 100% for errors, 10% for performance transactions (can be adjusted)
+- Capture unhandled errors, promise rejections, and console errors automatically (100% by default)
+- Attach user context (user ID once authenticated) to all events via `Sentry.setUser()`
+- Sample rates:
+  - Errors: 100% (automatic capture)
+  - Performance transactions (tracing): 10% for regular sessions (adjustable based on traffic)
+  - Session replays: 10% of all sessions, 100% of sessions with errors (for debugging)
 
 **Configuration:**
 
@@ -222,16 +225,40 @@ import * as Sentry from "@sentry/react";
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
   environment: import.meta.env.MODE,
-  tracesSampleRate: 0.1,
-  replaysSessionSampleRate: 0.1,
+  tracesSampleRate: 0.1, // 10% of performance transactions
+  replaysSessionSampleRate: 0.1, // 10% of sessions
+  replaysOnErrorSampleRate: 1.0, // 100% of sessions with errors
   integrations: [
-    new Sentry.Replay(),
-    new Sentry.CaptureConsole({ levels: ["error", "warn"] }),
+    Sentry.replayIntegration(),
+    Sentry.captureConsoleIntegration({ levels: ["error", "warn"] }),
   ],
 });
+
+// Attach user context after authentication
+function setUserContext(userId: string, email: string) {
+  Sentry.setUser({ id: userId, email });
+}
+
+// Clear user context on logout
+function clearUserContext() {
+  Sentry.setUser(null);
+}
 ```
 
 **Backend Logging:** Pino with structured JSON logging (see section 7 for format details).
+
+### 2.5.1 AI Model Deprecation Note
+
+⚠️ **Important:** `gpt-4o-mini` is being deprecated by OpenAI:
+- ChatGPT support ended: February 13, 2026
+- Azure support ends: March 31, 2026
+- OpenAI API: Still available but may be sunset in the future
+
+**Migration Strategy:**
+- Current codebase uses `gpt-4o-mini` for cost efficiency
+- When deprecation deadline approaches, migrate to latest available model (e.g., `gpt-4o` or successor)
+- Update model name in `soegih-ai` service and LangChain configuration
+- Test thoroughly to ensure functionality is preserved
 
 ### 2.6. E2E Testing Strategy
 

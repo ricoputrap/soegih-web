@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react'
 
 interface AuthShellProps {
+  title: string
   children: ReactNode
   footer: ReactNode
 }
 
-export function AuthShell({ children, footer }: AuthShellProps) {
+export function AuthShell({ title, children, footer }: AuthShellProps) {
   return (
     <>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,7 +20,7 @@ export function AuthShell({ children, footer }: AuthShellProps) {
           {/* Card */}
           <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
             {/* Brand */}
-            <div className="mb-6 flex items-center gap-2.5">
+            <div className="mb-8 flex flex-col items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center">
                 <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white">
                   <path
@@ -29,6 +30,7 @@ export function AuthShell({ children, footer }: AuthShellProps) {
                 </svg>
               </div>
               <span className="font-bold text-base text-gray-900">Soegih</span>
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{title}</h1>
             </div>
 
             {children}

@@ -43,6 +43,7 @@ export function LoginForm() {
 
   return (
     <AuthShell
+      title="Sign in"
       footer={
         <p className="text-sm text-gray-500">
           Don't have an account?{" "}

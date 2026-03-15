@@ -46,6 +46,7 @@ export function SignupForm() {
 
   return (
     <AuthShell
+      title="Create account"
       footer={
         <p style={{ fontSize: '14px', color: '#6B7280' }}>
           Already have an account?{' '}

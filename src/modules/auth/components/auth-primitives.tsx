@@ -12,16 +12,19 @@ export function Field({
   children: ReactNode
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
       <label
-        className="font-medium text-sm"
-        style={{ color: '#111827' }}
+        style={{
+          fontWeight: 500,
+          fontSize: '14px',
+          color: '#111827',
+        }}
       >
         {label}
       </label>
       {children}
       {error && (
-        <p id={errorId} role="alert" className="text-xs" style={{ color: '#DC2626' }}>
+        <p id={errorId} role="alert" style={{ fontSize: '12px', color: '#DC2626', margin: 0 }}>
           {error}
         </p>
       )}
@@ -34,8 +37,9 @@ export function AuthInput(props: React.InputHTMLAttributes<HTMLInputElement> & {
   return (
     <input
       {...rest}
-      className="w-full"
       style={{
+        width: '100%',
+        boxSizing: 'border-box',
         backgroundColor: '#FFFFFF',
         color: '#111827',
         border: hasError ? '1px solid #DC2626' : '1px solid #E5E7EB',

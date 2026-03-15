@@ -1011,10 +1011,8 @@ export interface Wallet {
   id: string
   user_id: string
   name: string
-  balance: number
+  balance: string  // API returns as string for precision
   type: WalletType
-  created_at: string
-  updated_at: string
 }
 
 export interface CreateWalletRequest {
@@ -1040,7 +1038,7 @@ import { getWallets, createWallet, updateWallet, deleteWallet } from './wallet.s
 
 vi.mock('../../../shared/lib/api-client', () => ({ apiClient: { get: vi.fn(), post: vi.fn(), patch: vi.fn(), delete: vi.fn() } }))
 
-const mockWallet = { id: '1', user_id: 'u1', name: 'Cash', balance: 100, type: 'cash', created_at: '', updated_at: '' }
+const mockWallet = { id: '1', user_id: 'u1', name: 'Cash', balance: 100, type: 'cash' }
 
 beforeEach(() => vi.clearAllMocks())
 
@@ -1149,7 +1147,7 @@ function wrapper({ children }: { children: ReactNode }) {
 
 describe('useWallets', () => {
   it('returns wallet list from service', async () => {
-    const mockWallets = [{ id: '1', name: 'Cash', type: 'cash', balance: 100, user_id: 'u1', created_at: '', updated_at: '' }]
+    const mockWallets = [{ id: '1', name: 'Cash', type: 'cash', balance: 100, user_id: 'u1' }]
     vi.mocked(walletService.getWallets).mockResolvedValueOnce(mockWallets)
     const { result } = renderHook(() => useWallets(), { wrapper })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -1235,7 +1233,7 @@ git commit -m "feat(wallet): add wallet TanStack Query hooks"
 
   Invoke `/frontend-design` with this context:
   - WalletForm: modal form (create/edit), Zod schema validating name (required), type (enum), balance (non-negative number). Uses React Hook Form + zodResolver, `mode: 'onChange'`.
-  - WalletTable (desktop): TanStack Table, client-side sort (name, balance, type, created_at), search input (filters by name), pagination (10 per page). Action buttons: Edit, Delete per row.
+  - WalletTable (desktop): TanStack Table, client-side sort (name, balance, type), search input (filters by name), pagination (10 per page). Action buttons: Edit, Delete per row.
   - WalletCard (mobile): card layout showing wallet name, type badge, balance. Tap actions for Edit/Delete.
   - Responsive: show WalletTable on md+ screens, WalletCard list on smaller screens.
   - Page has a "New Wallet" button that opens WalletForm modal.
@@ -1300,8 +1298,6 @@ export interface Category {
   name: string
   description: string | null
   type: CategoryType
-  created_at: string
-  updated_at: string
 }
 
 export interface CreateCategoryRequest {
@@ -1372,7 +1368,7 @@ function wrapper({ children }: { children: ReactNode }) {
 
 describe('useCategories', () => {
   it('returns category list from service', async () => {
-    const mockCategories = [{ id: '1', name: 'Food', type: 'expense', description: null, user_id: 'u1', created_at: '', updated_at: '' }]
+    const mockCategories = [{ id: '1', name: 'Food', type: 'expense', description: null, user_id: 'u1' }]
     vi.mocked(categoryService.getCategories).mockResolvedValueOnce(mockCategories)
     const { result } = renderHook(() => useCategories(), { wrapper })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -1445,7 +1441,7 @@ git commit -m "feat(category): add category types, service, and hooks"
 
   Same pattern as wallets. Key differences:
   - CategoryForm fields: name (required), type (expense|income radio or select), description (optional textarea)
-  - Table columns: name, type (badge: expense=red, income=green), description, created_at. Client-side sort/filter/paginate.
+  - Table columns: name, type (badge: expense=red, income=green), description. Client-side sort/filter/paginate.
   - Zod schema:
     ```typescript
     const categorySchema = z.object({
@@ -1483,30 +1479,27 @@ export type TransactionType = 'expense' | 'income' | 'transfer'
 
 export interface Posting {
   id: string
-  walletId: string
-  amount: number
+  wallet_id: string
+  amount: string  // API returns as string (e.g., "-50000") for precision
   wallet: {
     id: string
     name: string
-    type: WalletType
+    type: string
   }
 }
 
 export interface Category {
   id: string
   name: string
-  type: CategoryType
+  type: 'expense' | 'income'
 }
 
 export interface Transaction {
   id: string
   type: TransactionType
   note: string | null
-  categoryId: string | null
-  occurredAt: string
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  category_id: string | null
+  occurred_at: string
   category: Category | null
   postings: Posting[]
 }
@@ -1899,6 +1892,8 @@ git commit -m "feat(dashboard): implement dashboard metrics and expense pie char
 ---
 
 ## Chunk 8: AI Chat Module
+
+> **Note:** API endpoints for AI chat (`POST /api/v1/ai/chat`, `POST /api/v1/ai/chat/confirm`) are not yet defined in docs/API.md. This task assumes the backend will provide these endpoints. The frontend types and service are designed to work with the expected API contract.
 
 ### Task 21: AI Types & Service
 

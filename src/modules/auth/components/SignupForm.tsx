@@ -49,12 +49,11 @@ export function SignupForm() {
       heading="Create account"
       subheading="Start tracking your finances today"
       footer={
-        <p style={{ fontSize: '14px', color: '#6B7280' }}>
+        <p className="text-sm text-gray-500">
           Already have an account?{' '}
           <Link
             to="/login"
-            className="font-medium hover:underline"
-            style={{ color: '#2D7A7F' }}
+            className="font-medium text-primary hover:underline"
           >
             Sign in
           </Link>
@@ -63,15 +62,11 @@ export function SignupForm() {
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
         {errors.root && (
-          <div
-            role="alert"
-            className="flex items-center gap-2 rounded-lg px-3 py-2.5"
-            style={{ background: '#FEF2F2', border: '1px solid #FCA5A5', fontSize: '14px', color: '#DC2626' }}
-          >
-            <svg className="w-4 h-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+          <div role="alert" className="alert alert-error">
+            <svg className="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
             </svg>
-            {errors.root.message}
+            <span>{errors.root.message}</span>
           </div>
         )}
 

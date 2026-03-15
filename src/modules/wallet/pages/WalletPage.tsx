@@ -1,63 +1,78 @@
-import { useState } from 'react'
-import { useWallets, useCreateWallet, useUpdateWallet, useDeleteWallet } from '../hooks/use-wallets'
-import { WalletForm } from '../components/WalletForm'
-import { WalletTable } from '../components/WalletTable'
-import { WalletCard } from '../components/WalletCard'
-import type { Wallet, CreateWalletRequest, UpdateWalletRequest } from '../types/wallet.types'
+import { useState } from "react";
+import {
+  useWallets,
+  useCreateWallet,
+  useUpdateWallet,
+  useDeleteWallet,
+} from "../hooks/use-wallets";
+import { WalletForm } from "../components/WalletForm";
+import { WalletTable } from "../components/WalletTable";
+import { WalletCard } from "../components/WalletCard";
+import type {
+  Wallet,
+  CreateWalletRequest,
+  UpdateWalletRequest,
+} from "../types/wallet.types";
 
 export function WalletPage() {
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [editingWallet, setEditingWallet] = useState<Wallet | null>(null)
-  const [deleteConfirmWallet, setDeleteConfirmWallet] = useState<Wallet | null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingWallet, setEditingWallet] = useState<Wallet | null>(null);
+  const [deleteConfirmWallet, setDeleteConfirmWallet] = useState<Wallet | null>(
+    null,
+  );
 
-  const { data: wallets = [], isLoading } = useWallets()
-  const createMutation = useCreateWallet()
-  const updateMutation = useUpdateWallet()
-  const deleteMutation = useDeleteWallet()
+  const { data: wallets = [], isLoading } = useWallets();
+  const createMutation = useCreateWallet();
+  const updateMutation = useUpdateWallet();
+  const deleteMutation = useDeleteWallet();
 
   const handleOpenForm = () => {
-    setEditingWallet(null)
-    setIsFormOpen(true)
-  }
+    setEditingWallet(null);
+    setIsFormOpen(true);
+  };
 
   const handleEditWallet = (wallet: Wallet) => {
-    setEditingWallet(wallet)
-    setIsFormOpen(true)
-  }
+    setEditingWallet(wallet);
+    setIsFormOpen(true);
+  };
 
   const handleCloseForm = () => {
-    setIsFormOpen(false)
-    setEditingWallet(null)
-  }
+    setIsFormOpen(false);
+    setEditingWallet(null);
+  };
 
-  const handleFormSubmit = async (data: CreateWalletRequest | UpdateWalletRequest) => {
+  const handleFormSubmit = async (
+    data: CreateWalletRequest | UpdateWalletRequest,
+  ) => {
     try {
       if (editingWallet) {
-        await updateMutation.mutateAsync({ id: editingWallet.id, data })
+        await updateMutation.mutateAsync({ id: editingWallet.id, data });
       } else {
-        await createMutation.mutateAsync(data as CreateWalletRequest)
+        await createMutation.mutateAsync(data as CreateWalletRequest);
       }
-      handleCloseForm()
+      handleCloseForm();
     } catch (error) {
-      console.error('Failed to save wallet:', error)
+      console.error("Failed to save wallet:", error);
     }
-  }
+  };
 
   const handleDeleteWallet = async (wallet: Wallet) => {
     try {
-      await deleteMutation.mutateAsync(wallet.id)
-      setDeleteConfirmWallet(null)
+      await deleteMutation.mutateAsync(wallet.id);
+      setDeleteConfirmWallet(null);
     } catch (error) {
-      console.error('Failed to delete wallet:', error)
+      console.error("Failed to delete wallet:", error);
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Wallets</h1>
+          <h1 className="text-3xl font-bold text-gray-900 text-start">
+            Wallets
+          </h1>
           <p className="text-gray-500 mt-1">Manage your financial accounts</p>
         </div>
         <button
@@ -91,15 +106,23 @@ export function WalletPage() {
 
       {/* Delete Confirmation Modal */}
       {deleteConfirmWallet && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setDeleteConfirmWallet(null)}>
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
+          onClick={() => setDeleteConfirmWallet(null)}
+        >
           <div
             className="bg-white rounded-lg shadow-lg max-w-sm w-full border border-gray-200 p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Wallet?</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">
+              Delete Wallet?
+            </h3>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete <span className="font-semibold text-gray-900">{deleteConfirmWallet.name}</span>? This action cannot be
-              undone.
+              Are you sure you want to delete{" "}
+              <span className="font-semibold text-gray-900">
+                {deleteConfirmWallet.name}
+              </span>
+              ? This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
@@ -113,12 +136,12 @@ export function WalletPage() {
                 disabled={deleteMutation.isPending}
                 className="flex-1 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors font-medium text-sm"
               >
-                {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                {deleteMutation.isPending ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -112,7 +112,12 @@ code {
   background: var(--code-bg);
 }
 
-/* Auth field input: focus ring per design spec */
+/* Auth field input */
+.auth-field-input {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
 .auth-field-input:focus {
   border-color: #2D7A7F !important;
   box-shadow: 0 0 0 3px rgba(45, 122, 127, 0.15) !important;

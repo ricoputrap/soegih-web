@@ -27,13 +27,35 @@
 ```
 src/
 ├── modules/
-│   ├── auth/          # login, JWT storage
+│   ├── auth/
+│   │   ├── types/     # Auth interfaces (LoginRequest, AuthResponse, etc.)
+│   │   ├── services/  # auth.service, me.service
+│   │   └── components # LoginForm, SignupForm
+│   ├── wallet/        # ✅ IMPLEMENTED (Chunk 4)
+│   │   ├── types/     # Wallet, CreateWalletRequest, etc.
+│   │   ├── services/  # wallet.service (CRUD, tested)
+│   │   ├── hooks/     # useWallets, useCreateWallet, etc.
+│   │   ├── pages/     # WalletPage (main layout)
+│   │   └── components # WalletForm, WalletTable, WalletCard
 │   ├── dashboard/     # net worth, monthly totals, expense chart
-│   ├── wallet/        # wallet CRUD
-│   ├── category/      # category CRUD
-│   ├── transaction/   # transaction CRUD (server-side pagination)
-│   └── ai/            # AI chat, confirmation flow
-└── shared/            # components, hooks, utils, types
+│   ├── category/      # category CRUD (TODO)
+│   ├── transaction/   # transaction CRUD with server-side pagination (TODO)
+│   └── ai/            # AI chat, confirmation flow (TODO)
+├── shared/
+│   ├── context/       # AuthContext, auth state
+│   ├── components/    # AppLayout, Sidebar
+│   ├── lib/           # api-client, token-store
+│   └── utils/         # format.ts (currency, date)
+└── routes/            # TanStack Router file-based routes
+    ├── __root.tsx     # QueryClientProvider + AuthProvider
+    ├── login.tsx      # Login form
+    ├── signup.tsx     # Signup form
+    └── _auth/         # Protected layout (auth guard)
+        ├── dashboard.tsx
+        ├── wallets.tsx
+        ├── categories.tsx
+        ├── transactions.tsx
+        └── ai.tsx
 ```
 
 ## Key Patterns

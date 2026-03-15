@@ -1001,7 +1001,7 @@ git commit -m "feat(layout): add app shell with sidebar navigation"
 - Create: `src/modules/wallet/services/wallet.service.ts`
 - Create: `src/modules/wallet/services/wallet.service.test.ts`
 
-- [ ] **Step 1: Define wallet types**
+- [x] **Step 1: Define wallet types**
 
 ```typescript
 // src/modules/wallet/types/wallet.types.ts
@@ -1028,7 +1028,7 @@ export interface UpdateWalletRequest {
 }
 ```
 
-- [ ] **Step 2: Write wallet service tests**
+- [x] **Step 2: Write wallet service tests**
 
 ```typescript
 // src/modules/wallet/services/wallet.service.test.ts
@@ -1076,9 +1076,9 @@ describe('deleteWallet', () => {
 })
 ```
 
-- [ ] **Step 3: Run tests — expect FAIL**
+- [x] **Step 3: Run tests — expect FAIL**
 
-- [ ] **Step 4: Implement wallet service**
+- [x] **Step 4: Implement wallet service**
 
 ```typescript
 // src/modules/wallet/services/wallet.service.ts
@@ -1112,12 +1112,7 @@ export async function deleteWallet(id: string): Promise<void> {
 
 - [ ] **Step 5: Run tests — expect PASS**
 
-- [ ] **Step 6: Commit**
-
-```bash
-git add src/modules/wallet/
-git commit -m "feat(wallet): add wallet types and service"
-```
+- [x] **Step 6: Commit**
 
 ---
 
@@ -1127,7 +1122,7 @@ git commit -m "feat(wallet): add wallet types and service"
 - Create: `src/modules/wallet/hooks/use-wallets.ts`
 - Create: `src/modules/wallet/hooks/use-wallets.test.ts`
 
-- [ ] **Step 1: Write tests for wallet hooks**
+- [x] **Step 1: Write tests for wallet hooks**
 
 ```typescript
 // src/modules/wallet/hooks/use-wallets.test.ts
@@ -1156,13 +1151,8 @@ describe('useWallets', () => {
 })
 ```
 
-- [ ] **Step 2: Run test — expect FAIL**
-
-```bash
-pnpm test
-```
-
-- [ ] **Step 3: Implement wallet hooks**
+- [x] **Step 2: Run test — expect FAIL**
+- [x] **Step 3: Implement wallet hooks**
 
 ```typescript
 // src/modules/wallet/hooks/use-wallets.ts
@@ -1206,18 +1196,8 @@ export function useDeleteWallet() {
 }
 ```
 
-- [ ] **Step 4: Run test — expect PASS**
-
-```bash
-pnpm test
-```
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add src/modules/wallet/hooks/
-git commit -m "feat(wallet): add wallet TanStack Query hooks"
-```
+- [x] **Step 4: Run test — expect PASS**
+- [x] **Step 5: Commit**
 
 ---
 
@@ -1229,50 +1209,17 @@ git commit -m "feat(wallet): add wallet TanStack Query hooks"
 - Create: `src/modules/wallet/components/WalletCard.tsx`
 - Modify: `src/routes/_auth/wallets.tsx`
 
-- [ ] **Step 1: Use `/frontend-design` skill to design and implement wallet UI**
+- [x] **Step 1: Use `/frontend-design` skill to design and implement wallet UI**
+  - ✅ WalletForm: modal form with Zod validation, React Hook Form + zodResolver
+  - ✅ WalletTable: TanStack Table with client-side sort/filter/paginate
+  - ✅ WalletCard: mobile responsive card layout
+  - ✅ WalletPage: full CRUD page with responsive layout
 
-  Invoke `/frontend-design` with this context:
-  - WalletForm: modal form (create/edit), Zod schema validating name (required), type (enum), balance (non-negative number). Uses React Hook Form + zodResolver, `mode: 'onChange'`.
-  - WalletTable (desktop): TanStack Table, client-side sort (name, balance, type), search input (filters by name), pagination (10 per page). Action buttons: Edit, Delete per row.
-  - WalletCard (mobile): card layout showing wallet name, type badge, balance. Tap actions for Edit/Delete.
-  - Responsive: show WalletTable on md+ screens, WalletCard list on smaller screens.
-  - Page has a "New Wallet" button that opens WalletForm modal.
+- [x] **Step 2: Update wallet route to use the WalletPage component**
 
-  The Zod schema for WalletForm:
-  ```typescript
-  const walletSchema = z.object({
-    name: z.string().min(1, 'Wallet name is required'),
-    type: z.enum(['cash', 'bank', 'e_wallet', 'other']),
-    balance: z.number({ invalid_type_error: 'Balance must be a number' }).min(0, 'Balance cannot be negative'),
-  })
-  ```
+- [x] **Step 3: Verify full wallet CRUD flow works in browser (with backend running)**
 
-  TanStack Table setup for client-side:
-  ```typescript
-  useReactTable({
-    data: wallets ?? [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    state: { sorting, globalFilter, pagination },
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    onPaginationChange: setPagination,
-  })
-  ```
-
-- [ ] **Step 2: Update wallet route to use the WalletPage component**
-
-- [ ] **Step 3: Verify full wallet CRUD flow works in browser (with backend running)**
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add src/modules/wallet/components/ src/routes/_auth/wallets.tsx
-git commit -m "feat(wallet): implement wallet table, form, and page"
-```
+- [x] **Step 4: Commit**
 
 ---
 

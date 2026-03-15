@@ -112,7 +112,13 @@ code {
   background: var(--code-bg);
 }
 
-/* Auth form: green underline on input focus */
-.auth-input-underline:focus {
-  border-bottom-color: #1A7A4A !important;
+/* Auth field input: focus ring per design spec */
+.auth-field-input:focus {
+  border-color: #2D7A7F !important;
+  box-shadow: 0 0 0 3px rgba(45, 122, 127, 0.15) !important;
+}
+
+/* Auth submit button hover */
+.auth-submit-btn:not(:disabled):hover {
+  background: #256568 !important;
 }

@@ -5,7 +5,7 @@ import { useNavigate, Link } from '@tanstack/react-router'
 import { useAuthContext } from '../../../shared/context/auth-context'
 import { login } from '../services/auth.service'
 import { AuthShell } from './AuthShell'
-import { Field, SubmitButton, fieldInputStyle, inputClassName } from './auth-primitives'
+import { Field, AuthInput, SubmitButton } from './auth-primitives'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -41,51 +41,61 @@ export function LoginForm() {
   return (
     <AuthShell
       heading="Welcome back"
-      subheading="Sign in to your account"
+      subheading="Sign in to your account to continue"
       footer={
-        <p className="text-sm text-gray-400">
-          No account?{' '}
-          <Link to="/signup" className="text-gray-900 font-medium hover:underline underline-offset-2">
-            Create one
+        <p style={{ fontSize: '14px', color: '#6B7280' }}>
+          Don't have an account?{' '}
+          <Link
+            to="/signup"
+            className="font-medium hover:underline"
+            style={{ color: '#2D7A7F' }}
+          >
+            Sign up
           </Link>
         </p>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
         {errors.root && (
-          <p role="alert" className="text-sm text-red-600">
+          <div
+            role="alert"
+            className="flex items-center gap-2 rounded-lg px-3 py-2.5"
+            style={{ background: '#FEF2F2', border: '1px solid #FCA5A5', fontSize: '14px', color: '#DC2626' }}
+          >
+            <svg className="w-4 h-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+            </svg>
             {errors.root.message}
-          </p>
+          </div>
         )}
 
         <Field label="Email" error={errors.email?.message} errorId="email-error">
-          <input
+          <AuthInput
             id="email"
             type="email"
             autoComplete="email"
             placeholder="you@example.com"
+            hasError={!!errors.email}
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? 'email-error' : undefined}
-            className={inputClassName}
-            style={fieldInputStyle(!!errors.email)}
             {...register('email')}
           />
         </Field>
 
         <Field label="Password" error={errors.password?.message} errorId="password-error">
-          <input
+          <AuthInput
             id="password"
             type="password"
             autoComplete="current-password"
-            placeholder="••••••••"
+            placeholder="Enter your password"
+            hasError={!!errors.password}
             aria-invalid={!!errors.password}
             aria-describedby={errors.password ? 'password-error' : undefined}
-            style={fieldInputStyle(!!errors.password)}
             {...register('password')}
           />
         </Field>
 
-        <div className="pt-1">
+        <div className="mt-2">
           <SubmitButton loading={isSubmitting} label="Sign in" loadingLabel="Signing in…" />
         </div>
       </form>

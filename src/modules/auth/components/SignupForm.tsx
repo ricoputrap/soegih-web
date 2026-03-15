@@ -5,7 +5,7 @@ import { useNavigate, Link } from '@tanstack/react-router'
 import { useAuthContext } from '../../../shared/context/auth-context'
 import { signup } from '../services/auth.service'
 import { AuthShell } from './AuthShell'
-import { Field, SubmitButton, fieldInputStyle, inputClassName } from './auth-primitives'
+import { Field, AuthInput, SubmitButton } from './auth-primitives'
 
 const signupSchema = z
   .object({
@@ -47,66 +47,74 @@ export function SignupForm() {
   return (
     <AuthShell
       heading="Create account"
-      subheading="Start tracking your finances"
+      subheading="Start tracking your finances today"
       footer={
-        <p className="text-sm text-gray-400">
-          Have an account?{' '}
-          <Link to="/login" className="text-gray-900 font-medium hover:underline underline-offset-2">
+        <p style={{ fontSize: '14px', color: '#6B7280' }}>
+          Already have an account?{' '}
+          <Link
+            to="/login"
+            className="font-medium hover:underline"
+            style={{ color: '#2D7A7F' }}
+          >
             Sign in
           </Link>
         </p>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
         {errors.root && (
-          <p role="alert" className="text-sm text-red-600">
+          <div
+            role="alert"
+            className="flex items-center gap-2 rounded-lg px-3 py-2.5"
+            style={{ background: '#FEF2F2', border: '1px solid #FCA5A5', fontSize: '14px', color: '#DC2626' }}
+          >
+            <svg className="w-4 h-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+            </svg>
             {errors.root.message}
-          </p>
+          </div>
         )}
 
         <Field label="Email" error={errors.email?.message} errorId="email-error">
-          <input
+          <AuthInput
             id="email"
             type="email"
             autoComplete="email"
             placeholder="you@example.com"
+            hasError={!!errors.email}
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? 'email-error' : undefined}
-            className={inputClassName}
-            style={fieldInputStyle(!!errors.email)}
             {...register('email')}
           />
         </Field>
 
         <Field label="Password" error={errors.password?.message} errorId="password-error">
-          <input
+          <AuthInput
             id="password"
             type="password"
             autoComplete="new-password"
             placeholder="Min. 8 characters"
+            hasError={!!errors.password}
             aria-invalid={!!errors.password}
             aria-describedby={errors.password ? 'password-error' : undefined}
-            className={inputClassName}
-            style={fieldInputStyle(!!errors.password)}
             {...register('password')}
           />
         </Field>
 
         <Field label="Confirm password" error={errors.confirmPassword?.message} errorId="confirm-error">
-          <input
+          <AuthInput
             id="confirmPassword"
             type="password"
             autoComplete="new-password"
-            placeholder="••••••••"
+            placeholder="Repeat your password"
+            hasError={!!errors.confirmPassword}
             aria-invalid={!!errors.confirmPassword}
             aria-describedby={errors.confirmPassword ? 'confirm-error' : undefined}
-            className={inputClassName}
-            style={fieldInputStyle(!!errors.confirmPassword)}
             {...register('confirmPassword')}
           />
         </Field>
 
-        <div className="pt-1">
+        <div className="mt-2">
           <SubmitButton loading={isSubmitting} label="Create account" loadingLabel="Creating account…" />
         </div>
       </form>

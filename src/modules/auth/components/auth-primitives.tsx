@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import type React from 'react'
 
 export function Field({
   label,
@@ -13,13 +12,16 @@ export function Field({
   children: ReactNode
 }) {
   return (
-    <div className="space-y-1">
-      <label className="block text-xs font-medium text-gray-500 uppercase" style={{ letterSpacing: '0.12em' }}>
+    <div className="flex flex-col gap-1.5">
+      <label
+        className="font-medium"
+        style={{ fontSize: '14px', color: '#111827' }}
+      >
         {label}
       </label>
       {children}
       {error && (
-        <p id={errorId} role="alert" className="text-xs text-red-500 pt-0.5">
+        <p id={errorId} role="alert" style={{ fontSize: '13px', color: '#DC2626' }}>
           {error}
         </p>
       )}
@@ -27,22 +29,26 @@ export function Field({
   )
 }
 
-export function fieldInputStyle(hasError: boolean): React.CSSProperties {
-  return {
-    width: '100%',
-    background: 'transparent',
-    border: 'none',
-    borderBottom: hasError ? '2px solid #ef4444' : '1.5px solid #e5e7eb',
-    borderRadius: 0,
-    padding: '8px 0',
-    fontSize: '14px',
-    color: '#111827',
-    outline: 'none',
-    transition: 'border-color 0.15s',
-  }
+export function AuthInput(props: React.InputHTMLAttributes<HTMLInputElement> & { hasError?: boolean }) {
+  const { hasError, ...rest } = props
+  return (
+    <input
+      {...rest}
+      className="auth-field-input w-full"
+      style={{
+        background: '#FFFFFF',
+        border: hasError ? '1px solid #DC2626' : '1px solid #E5E7EB',
+        borderRadius: '8px',
+        padding: '10px 14px',
+        fontSize: '14px',
+        color: '#111827',
+        outline: 'none',
+        transition: 'border-color 0.15s, box-shadow 0.15s',
+        fontFamily: 'inherit',
+      }}
+    />
+  )
 }
-
-export const inputClassName = 'auth-input-underline w-full bg-transparent'
 
 export function SubmitButton({
   loading,
@@ -57,8 +63,20 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={loading}
-      className="w-full py-2.5 text-sm font-medium text-white transition-opacity disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-      style={{ background: '#1A7A4A', borderRadius: '4px' }}
+      className="auth-submit-btn w-full font-medium flex items-center justify-center gap-2"
+      style={{
+        background: '#2D7A7F',
+        color: '#FFFFFF',
+        borderRadius: '8px',
+        padding: '11px 20px',
+        fontSize: '14px',
+        border: 'none',
+        cursor: loading ? 'not-allowed' : 'pointer',
+        opacity: loading ? 0.7 : 1,
+        transition: 'opacity 0.15s, background 0.15s',
+        fontFamily: 'inherit',
+        fontWeight: 500,
+      }}
     >
       {loading ? (
         <>
@@ -74,3 +92,5 @@ export function SubmitButton({
     </button>
   )
 }
+
+import type React from 'react'

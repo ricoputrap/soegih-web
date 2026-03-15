@@ -1,0 +1,303 @@
+/* Auth page — Editorial Minimalism aesthetic
+   Warm off-white + ink-dark + deep teal accent
+   Fonts loaded via Google Fonts link in index.html or injected via @import */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ── Page shell ─────────────────────────────────────────────────────────── */
+.auth-page {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f3ee;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,128,128,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 90%, rgba(20,20,20,0.04) 0%, transparent 55%);
+  padding: 24px;
+  box-sizing: border-box;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* ── Card ────────────────────────────────────────────────────────────────── */
+.auth-card {
+  background: #faf9f6;
+  border: 1px solid #ddd9d0;
+  border-radius: 2px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.04),
+    0 8px 32px rgba(0,0,0,0.07),
+    0 24px 64px rgba(0,0,0,0.04);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Top accent bar — draws in on card mount */
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #008080 0%, #00b3b3 100%);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: drawBar 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+@keyframes drawBar {
+  to { transform: scaleX(1); }
+}
+
+/* ── Card header ─────────────────────────────────────────────────────────── */
+.auth-card-header {
+  padding: 40px 40px 28px;
+  border-bottom: 1px solid #e8e4dc;
+}
+
+.auth-brand {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #008080;
+  margin: 0 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-brand::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 1px;
+  background: #008080;
+}
+
+.auth-title {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #0e0c09;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+  line-height: 1.15;
+}
+
+.auth-subtitle {
+  font-size: 14px;
+  font-weight: 300;
+  color: #7a7469;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Form body ───────────────────────────────────────────────────────────── */
+.auth-form-body {
+  padding: 32px 40px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Field ───────────────────────────────────────────────────────────────── */
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.auth-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7a7469;
+}
+
+.auth-input-wrap {
+  position: relative;
+}
+
+.auth-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 14px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 300;
+  color: #0e0c09;
+  background: #fff;
+  border: 1px solid #d5d0c6;
+  border-radius: 2px;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  -webkit-appearance: none;
+}
+
+.auth-input::placeholder {
+  color: #b8b3a8;
+}
+
+.auth-input:focus {
+  border-color: #008080;
+  box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
+}
+
+.auth-input[aria-invalid='true'],
+.auth-input.error {
+  border-color: #c0392b;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.08);
+}
+
+.auth-error {
+  font-size: 12px;
+  font-weight: 400;
+  color: #c0392b;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.auth-error::before {
+  content: '×';
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ── Root error banner ───────────────────────────────────────────────────── */
+.auth-root-error {
+  background: #fdf3f2;
+  border: 1px solid #f5c6c2;
+  border-radius: 2px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #922b21;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.auth-root-error::before {
+  content: '!';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  border-radius: 50%;
+  background: #c0392b;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 1px;
+}
+
+/* ── Submit button ───────────────────────────────────────────────────────── */
+.auth-submit {
+  width: 100%;
+  padding: 13px 20px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: #0e0c09;
+  border: 1px solid #0e0c09;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  transition:
+    background 0.18s ease,
+    transform 0.12s ease,
+    box-shadow 0.18s ease;
+  position: relative;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.auth-submit:not(:disabled):hover {
+  background: #1a1714;
+  box-shadow: 0 4px 16px rgba(14, 12, 9, 0.2);
+  transform: translateY(-1px);
+}
+
+.auth-submit:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.auth-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Loading shimmer inside button */
+.auth-submit.loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 50%, transparent 100%);
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+
+/* ── Footer link ─────────────────────────────────────────────────────────── */
+.auth-footer {
+  padding: 20px 40px 28px;
+  border-top: 1px solid #e8e4dc;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 300;
+  color: #7a7469;
+}
+
+.auth-footer a {
+  color: #008080;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(0,128,128,0.3);
+  padding-bottom: 1px;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.auth-footer a:hover {
+  color: #006666;
+  border-color: #006666;
+}
+
+/* ── Enter animation for card ────────────────────────────────────────────── */
+.auth-card {
+  animation: cardEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .auth-card-header,
+  .auth-form-body,
+  .auth-footer {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}

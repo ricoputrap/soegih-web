@@ -1,7 +1,9 @@
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate, Link } from "@tanstack/react-router";
+import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useAuthContext } from "../../../shared/context/auth-context";
 import { login } from "../services/auth.service";
 import { AuthShell } from "./AuthShell";
@@ -17,6 +19,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export function LoginForm() {
   const { persistAuth } = useAuthContext();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const {
     register,
@@ -40,15 +43,12 @@ export function LoginForm() {
 
   return (
     <AuthShell
-      heading="Welcome back"
-      subheading="Sign in to your account to continue"
       footer={
-        <p style={{ fontSize: "14px", color: "#6B7280" }}>
+        <p className="text-sm text-gray-500">
           Don't have an account?{" "}
           <Link
             to="/signup"
-            className="font-medium hover:underline"
-            style={{ color: "#2D7A7F" }}
+            className="font-medium text-teal-600 hover:underline"
           >
             Sign up
           </Link>
@@ -58,22 +58,12 @@ export function LoginForm() {
       <form
         onSubmit={handleSubmit(onSubmit)}
         noValidate
-        style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+        className="flex flex-col gap-4"
       >
         {errors.root && (
           <div
             role="alert"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              borderRadius: "8px",
-              padding: "12px",
-              backgroundColor: "#FEF2F2",
-              border: "1px solid #FCA5A5",
-              fontSize: "14px",
-              color: "#DC2626",
-            }}
+            className="flex items-center gap-2 rounded-lg p-3 bg-red-50 border border-red-200 text-sm text-red-600"
           >
             <svg
               className="w-4 h-4 shrink-0"
@@ -95,8 +85,7 @@ export function LoginForm() {
           error={errors.email?.message}
           errorId="email-error"
         >
-          <input id="email" type="email" className="" {...register("email")} />
-          {/*<AuthInput
+          <AuthInput
             id="email"
             type="email"
             autoComplete="email"
@@ -105,7 +94,7 @@ export function LoginForm() {
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? "email-error" : undefined}
             {...register("email")}
-          />*/}
+          />
         </Field>
 
         <Field
@@ -113,25 +102,37 @@ export function LoginForm() {
           error={errors.password?.message}
           errorId="password-error"
         >
-          <AuthInput
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            placeholder="Enter your password"
-            hasError={!!errors.password}
-            aria-invalid={!!errors.password}
-            aria-describedby={errors.password ? "password-error" : undefined}
-            {...register("password")}
-          />
+          <div className="relative">
+            <AuthInput
+              id="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              placeholder="Enter your password"
+              hasError={!!errors.password}
+              aria-invalid={!!errors.password}
+              aria-describedby={errors.password ? "password-error" : undefined}
+              {...register("password")}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? (
+                <IoEyeOff className="w-5 h-5" />
+              ) : (
+                <IoEye className="w-5 h-5" />
+              )}
+            </button>
+          </div>
         </Field>
 
-        <div className="mt-2">
-          <SubmitButton
-            loading={isSubmitting}
-            label="Sign in"
-            loadingLabel="Signing in…"
-          />
-        </div>
+        <SubmitButton
+          loading={isSubmitting}
+          label="Sign in"
+          loadingLabel="Signing in…"
+        />
       </form>
     </AuthShell>
   );

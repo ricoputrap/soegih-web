@@ -13,7 +13,11 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthWalletsRouteImport } from './routes/_auth/wallets'
+import { Route as AuthTransactionsRouteImport } from './routes/_auth/transactions'
 import { Route as AuthDashboardRouteImport } from './routes/_auth/dashboard'
+import { Route as AuthCategoriesRouteImport } from './routes/_auth/categories'
+import { Route as AuthAiRouteImport } from './routes/_auth/ai'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -34,9 +38,29 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthWalletsRoute = AuthWalletsRouteImport.update({
+  id: '/wallets',
+  path: '/wallets',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthTransactionsRoute = AuthTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthDashboardRoute = AuthDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthCategoriesRoute = AuthCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthAiRoute = AuthAiRouteImport.update({
+  id: '/ai',
+  path: '/ai',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -44,13 +68,21 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/ai': typeof AuthAiRoute
+  '/categories': typeof AuthCategoriesRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/transactions': typeof AuthTransactionsRoute
+  '/wallets': typeof AuthWalletsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/ai': typeof AuthAiRoute
+  '/categories': typeof AuthCategoriesRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/transactions': typeof AuthTransactionsRoute
+  '/wallets': typeof AuthWalletsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -58,14 +90,44 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/_auth/ai': typeof AuthAiRoute
+  '/_auth/categories': typeof AuthCategoriesRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
+  '/_auth/transactions': typeof AuthTransactionsRoute
+  '/_auth/wallets': typeof AuthWalletsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/ai'
+    | '/categories'
+    | '/dashboard'
+    | '/transactions'
+    | '/wallets'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/dashboard'
-  id: '__root__' | '/' | '/_auth' | '/login' | '/signup' | '/_auth/dashboard'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/ai'
+    | '/categories'
+    | '/dashboard'
+    | '/transactions'
+    | '/wallets'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/login'
+    | '/signup'
+    | '/_auth/ai'
+    | '/_auth/categories'
+    | '/_auth/dashboard'
+    | '/_auth/transactions'
+    | '/_auth/wallets'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -105,6 +167,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/wallets': {
+      id: '/_auth/wallets'
+      path: '/wallets'
+      fullPath: '/wallets'
+      preLoaderRoute: typeof AuthWalletsRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/transactions': {
+      id: '/_auth/transactions'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof AuthTransactionsRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/dashboard': {
       id: '/_auth/dashboard'
       path: '/dashboard'
@@ -112,15 +188,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/categories': {
+      id: '/_auth/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof AuthCategoriesRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/ai': {
+      id: '/_auth/ai'
+      path: '/ai'
+      fullPath: '/ai'
+      preLoaderRoute: typeof AuthAiRouteImport
+      parentRoute: typeof AuthRoute
+    }
   }
 }
 
 interface AuthRouteChildren {
+  AuthAiRoute: typeof AuthAiRoute
+  AuthCategoriesRoute: typeof AuthCategoriesRoute
   AuthDashboardRoute: typeof AuthDashboardRoute
+  AuthTransactionsRoute: typeof AuthTransactionsRoute
+  AuthWalletsRoute: typeof AuthWalletsRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthAiRoute: AuthAiRoute,
+  AuthCategoriesRoute: AuthCategoriesRoute,
   AuthDashboardRoute: AuthDashboardRoute,
+  AuthTransactionsRoute: AuthTransactionsRoute,
+  AuthWalletsRoute: AuthWalletsRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

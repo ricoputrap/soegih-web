@@ -111,3 +111,8 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Auth form: green underline on input focus */
+.auth-input-underline:focus {
+  border-bottom-color: #1A7A4A !important;
+}

@@ -5,6 +5,7 @@ import { useNavigate, Link } from '@tanstack/react-router'
 import { useAuthContext } from '../../../shared/context/auth-context'
 import { signup } from '../services/auth.service'
 import { AuthShell } from './AuthShell'
+import { Field, SubmitButton, fieldInputStyle, inputClassName } from './auth-primitives'
 
 const signupSchema = z
   .object({
@@ -18,11 +19,6 @@ const signupSchema = z
   })
 
 type SignupFormData = z.infer<typeof signupSchema>
-
-const inputBase =
-  'w-full px-4 py-3 text-sm text-[#0A0A0A] placeholder:text-[#AAAAAA] outline-none transition-all bg-white font-medium'
-const inputBorder = 'border-2 border-[#0A0A0A] shadow-[3px_3px_0_#0A0A0A] focus:shadow-[1px_1px_0_#0A0A0A] focus:translate-x-[2px] focus:translate-y-[2px]'
-const inputError = 'border-2 border-[#D00000] shadow-[3px_3px_0_#D00000]'
 
 export function SignupForm() {
   const { persistAuth } = useAuthContext()
@@ -50,40 +46,25 @@ export function SignupForm() {
 
   return (
     <AuthShell
-      heading="Create Account"
-      subheading="Start tracking your finances for free"
+      heading="Create account"
+      subheading="Start tracking your finances"
       footer={
-        <p className="text-sm text-[#555]" style={{ fontFamily: "'Instrument Sans', sans-serif" }}>
-          Already have an account?{' '}
-          <Link
-            to="/login"
-            className="font-semibold text-[#0A0A0A] underline underline-offset-2 decoration-2 hover:decoration-[#D4A017] transition-all"
-          >
-            Sign in →
+        <p className="text-sm text-gray-400">
+          Have an account?{' '}
+          <Link to="/login" className="text-gray-900 font-medium hover:underline underline-offset-2">
+            Sign in
           </Link>
         </p>
       }
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
         {errors.root && (
-          <div
-            role="alert"
-            className="flex items-start gap-3 px-4 py-3 text-sm font-medium text-[#0A0A0A]"
-            style={{ border: '2px solid #D00000', background: '#FFF0F0', boxShadow: '3px 3px 0 #D00000' }}
-          >
-            <span className="text-[#D00000] font-bold text-base leading-none mt-0.5">!</span>
+          <p role="alert" className="text-sm text-red-600">
             {errors.root.message}
-          </div>
+          </p>
         )}
 
-        {/* Email */}
-        <div className="space-y-1.5">
-          <label
-            htmlFor="email"
-            className="block text-[10px] font-bold tracking-[0.16em] uppercase text-[#0A0A0A]"
-          >
-            Email Address
-          </label>
+        <Field label="Email" error={errors.email?.message} errorId="email-error">
           <input
             id="email"
             type="email"
@@ -91,24 +72,13 @@ export function SignupForm() {
             placeholder="you@example.com"
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? 'email-error' : undefined}
-            className={`${inputBase} ${errors.email ? inputError : inputBorder}`}
+            className={inputClassName}
+            style={fieldInputStyle(!!errors.email)}
             {...register('email')}
           />
-          {errors.email && (
-            <p id="email-error" role="alert" className="text-xs font-semibold text-[#D00000]">
-              ↳ {errors.email.message}
-            </p>
-          )}
-        </div>
+        </Field>
 
-        {/* Password */}
-        <div className="space-y-1.5">
-          <label
-            htmlFor="password"
-            className="block text-[10px] font-bold tracking-[0.16em] uppercase text-[#0A0A0A]"
-          >
-            Password
-          </label>
+        <Field label="Password" error={errors.password?.message} errorId="password-error">
           <input
             id="password"
             type="password"
@@ -116,76 +86,28 @@ export function SignupForm() {
             placeholder="Min. 8 characters"
             aria-invalid={!!errors.password}
             aria-describedby={errors.password ? 'password-error' : undefined}
-            className={`${inputBase} ${errors.password ? inputError : inputBorder}`}
+            className={inputClassName}
+            style={fieldInputStyle(!!errors.password)}
             {...register('password')}
           />
-          {errors.password && (
-            <p id="password-error" role="alert" className="text-xs font-semibold text-[#D00000]">
-              ↳ {errors.password.message}
-            </p>
-          )}
-        </div>
+        </Field>
 
-        {/* Confirm Password */}
-        <div className="space-y-1.5">
-          <label
-            htmlFor="confirmPassword"
-            className="block text-[10px] font-bold tracking-[0.16em] uppercase text-[#0A0A0A]"
-          >
-            Confirm Password
-          </label>
+        <Field label="Confirm password" error={errors.confirmPassword?.message} errorId="confirm-error">
           <input
             id="confirmPassword"
             type="password"
             autoComplete="new-password"
-            placeholder="Repeat password"
+            placeholder="••••••••"
             aria-invalid={!!errors.confirmPassword}
             aria-describedby={errors.confirmPassword ? 'confirm-error' : undefined}
-            className={`${inputBase} ${errors.confirmPassword ? inputError : inputBorder}`}
+            className={inputClassName}
+            style={fieldInputStyle(!!errors.confirmPassword)}
             {...register('confirmPassword')}
           />
-          {errors.confirmPassword && (
-            <p id="confirm-error" role="alert" className="text-xs font-semibold text-[#D00000]">
-              ↳ {errors.confirmPassword.message}
-            </p>
-          )}
-        </div>
+        </Field>
 
-        {/* Submit */}
-        <div className="pt-2">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full px-6 py-3.5 text-sm font-bold uppercase tracking-[0.1em] text-[#0A0A0A] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
-            style={{
-              background: '#F5C518',
-              border: '2.5px solid #0A0A0A',
-              boxShadow: '4px 4px 0 #0A0A0A',
-              fontFamily: "'Syne', sans-serif",
-            }}
-            onMouseEnter={(e) => {
-              if (!isSubmitting) {
-                (e.currentTarget as HTMLButtonElement).style.boxShadow = '2px 2px 0 #0A0A0A'
-                ;(e.currentTarget as HTMLButtonElement).style.transform = 'translate(2px, 2px)'
-              }
-            }}
-            onMouseLeave={(e) => {
-              ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '4px 4px 0 #0A0A0A'
-              ;(e.currentTarget as HTMLButtonElement).style.transform = ''
-            }}
-          >
-            {isSubmitting ? (
-              <>
-                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Creating account…
-              </>
-            ) : (
-              'Create Account →'
-            )}
-          </button>
+        <div className="pt-1">
+          <SubmitButton loading={isSubmitting} label="Create account" loadingLabel="Creating account…" />
         </div>
       </form>
     </AuthShell>

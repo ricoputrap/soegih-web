@@ -1483,19 +1483,32 @@ export type TransactionType = 'expense' | 'income' | 'transfer'
 
 export interface Posting {
   id: string
-  wallet_id: string
+  walletId: string
   amount: number
+  wallet: {
+    id: string
+    name: string
+    type: WalletType
+  }
+}
+
+export interface Category {
+  id: string
+  name: string
+  type: CategoryType
 }
 
 export interface Transaction {
   id: string
   type: TransactionType
   note: string | null
-  category_id: string | null
-  occurred_at: string
+  categoryId: string | null
+  occurredAt: string
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
+  category: Category | null
   postings: Posting[]
-  created_at: string
-  updated_at: string
 }
 
 export interface PaginatedResponse<T> {
@@ -1517,17 +1530,29 @@ export interface TransactionListParams {
   month?: string // YYYY-MM
 }
 
-export interface CreateTransactionRequest {
-  type: TransactionType
-  note?: string
-  category_id?: string
+export interface CreateTransactionRequestExpense {
+  type: 'expense' | 'income'
+  amount: number
   occurred_at: string
-  postings: Array<{ wallet_id: string; amount: number }>
+  wallet_id: string
+  category_id: string
+  note?: string
 }
+
+export interface CreateTransactionRequestTransfer {
+  type: 'transfer'
+  amount: number
+  occurred_at: string
+  from_wallet_id: string
+  to_wallet_id: string
+  note?: string
+}
+
+export type CreateTransactionRequest = CreateTransactionRequestExpense | CreateTransactionRequestTransfer
 
 export interface UpdateTransactionRequest {
   note?: string
-  category_id?: string
+  category_id?: string  // only for expense/income, not transfer
   occurred_at?: string
 }
 ```
@@ -1555,8 +1580,15 @@ describe('getTransactions', () => {
 })
 
 describe('createTransaction', () => {
-  it('calls POST /api/v1/transactions', async () => {
-    const payload = { type: 'expense' as const, occurred_at: '2026-01-01', postings: [{ wallet_id: 'w1', amount: -50 }] }
+  it('calls POST /api/v1/transactions (expense)', async () => {
+    const payload = { type: 'expense' as const, amount: 50000, occurred_at: '2026-01-01', wallet_id: 'w1', category_id: 'c1', note: 'Coffee' }
+    vi.mocked(apiClient.post).mockResolvedValueOnce({ data: { id: '1', ...payload } })
+    await createTransaction(payload)
+    expect(apiClient.post).toHaveBeenCalledWith('/api/v1/transactions', payload)
+  })
+
+  it('calls POST /api/v1/transactions (transfer)', async () => {
+    const payload = { type: 'transfer' as const, amount: 100000, occurred_at: '2026-01-01', from_wallet_id: 'w1', to_wallet_id: 'w2' }
     vi.mocked(apiClient.post).mockResolvedValueOnce({ data: { id: '1', ...payload } })
     await createTransaction(payload)
     expect(apiClient.post).toHaveBeenCalledWith('/api/v1/transactions', payload)
@@ -1681,35 +1713,34 @@ git commit -m "feat(transaction): add transaction hooks with server-side paginat
 
   Key design requirements:
   - **TransactionForm** has conditional fields based on type:
-    - All types: type (expense|income|transfer), note (optional), occurred_at (date)
-    - expense/income: category_id (select from categories), wallet_id, amount
-    - transfer: from_wallet_id, to_wallet_id, amount
-  - Zod schema:
+    - expense/income: type, amount, occurred_at (date), wallet_id, category_id (required), note (optional)
+    - transfer: type, amount, occurred_at, from_wallet_id, to_wallet_id, note (optional) — no category
+  - Zod schema (matches API exactly):
     ```typescript
     const transactionSchema = z.discriminatedUnion('type', [
       z.object({
         type: z.literal('expense'),
-        note: z.string().optional(),
-        occurred_at: z.string(),
-        category_id: z.string().min(1, 'Category is required'),
-        wallet_id: z.string().min(1, 'Wallet is required'),
         amount: z.number().positive('Amount must be positive'),
+        occurred_at: z.string(),
+        wallet_id: z.string().min(1, 'Wallet is required'),
+        category_id: z.string().min(1, 'Category is required'),
+        note: z.string().optional(),
       }),
       z.object({
         type: z.literal('income'),
-        note: z.string().optional(),
-        occurred_at: z.string(),
-        category_id: z.string().min(1, 'Category is required'),
-        wallet_id: z.string().min(1, 'Wallet is required'),
         amount: z.number().positive('Amount must be positive'),
+        occurred_at: z.string(),
+        wallet_id: z.string().min(1, 'Wallet is required'),
+        category_id: z.string().min(1, 'Category is required'),
+        note: z.string().optional(),
       }),
       z.object({
         type: z.literal('transfer'),
-        note: z.string().optional(),
+        amount: z.number().positive('Amount must be positive'),
         occurred_at: z.string(),
         from_wallet_id: z.string().min(1, 'Source wallet is required'),
         to_wallet_id: z.string().min(1, 'Destination wallet is required'),
-        amount: z.number().positive('Amount must be positive'),
+        note: z.string().optional(),
       }),
     ])
     ```
@@ -1916,7 +1947,7 @@ describe('sendChat', () => {
 
 describe('confirmTransaction', () => {
   it('calls POST /api/v1/ai/chat/confirm', async () => {
-    const payload = { parsed_transaction: { type: 'expense' as const, occurred_at: '', postings: [] } }
+    const payload = { parsed_transaction: { type: 'expense' as const, amount: 50000, occurred_at: '2026-01-01', wallet_id: 'w1', category_id: 'c1' } }
     vi.mocked(apiClient.post).mockResolvedValueOnce({ data: { id: '1' } })
     await confirmTransaction(payload)
     expect(apiClient.post).toHaveBeenCalledWith('/api/v1/ai/chat/confirm', payload)

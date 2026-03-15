@@ -9,92 +9,150 @@ interface AuthShellProps {
 
 export function AuthShell({ heading, subheading, children, footer }: AuthShellProps) {
   return (
-    <div className="fixed inset-0 flex bg-[#0a0a0f] overflow-auto">
-      {/* ── Left panel – brand ─────────────────────────────────────── */}
-      <div className="hidden lg:flex lg:w-[45%] relative flex-col justify-between p-12 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-950/60 via-[#0a0a0f] to-[#0a0a0f]" />
+    <>
+      {/* Load Syne (display) + Instrument Sans (body) */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet"
+      />
 
-        {/* Geometric orbs */}
-        <div className="absolute top-[-80px] left-[-80px] w-[400px] h-[400px] rounded-full bg-violet-600/10 blur-[80px] animate-[pulse_6s_ease-in-out_infinite]" />
-        <div className="absolute bottom-[-60px] right-[-60px] w-[300px] h-[300px] rounded-full bg-violet-500/8 blur-[60px] animate-[pulse_8s_ease-in-out_infinite_2s]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-violet-900/5 blur-[100px]" />
-
-        {/* Grid texture */}
+      <div
+        className="fixed inset-0 overflow-auto"
+        style={{ background: '#F5F0E8', fontFamily: "'Instrument Sans', sans-serif" }}
+      >
+        {/* Subtle dot-grid texture */}
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="fixed inset-0 pointer-events-none"
           style={{
-            backgroundImage: `linear-gradient(rgba(139,92,246,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,0.8) 1px, transparent 1px)`,
-            backgroundSize: '48px 48px',
+            backgroundImage: 'radial-gradient(circle, #00000010 1px, transparent 1px)',
+            backgroundSize: '24px 24px',
           }}
         />
 
-        {/* Content */}
-        <div className="relative z-10">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-violet-600 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <span className="text-white font-bold text-lg tracking-tight">Soegih</span>
-          </div>
-        </div>
-
-        <div className="relative z-10 space-y-6">
-          <h2 className="text-4xl font-bold text-white leading-tight tracking-tight">
-            Your finances,<br />
-            <span className="text-violet-400">crystal clear.</span>
-          </h2>
-          <p className="text-slate-400 text-base leading-relaxed max-w-xs">
-            Track every transaction, understand your spending, and grow your wealth with intelligent insights.
-          </p>
-
-          {/* Feature pills */}
-          <div className="flex flex-wrap gap-2 pt-2">
-            {['Wallet tracking', 'AI parsing', 'Smart dashboard', 'Categories'].map((f) => (
-              <span key={f} className="text-xs font-medium text-violet-300 bg-violet-500/10 border border-violet-500/20 rounded-full px-3 py-1">
-                {f}
+        <div className="relative min-h-full flex">
+          {/* ── Left panel ─────────────────────────────────────────── */}
+          <div
+            className="hidden lg:flex lg:w-[42%] flex-col justify-between p-14"
+            style={{ borderRight: '3px solid #0A0A0A' }}
+          >
+            {/* Brand */}
+            <div className="flex items-center gap-3">
+              <div
+                className="w-9 h-9 flex items-center justify-center"
+                style={{
+                  background: '#0A0A0A',
+                  border: '2px solid #0A0A0A',
+                  boxShadow: '3px 3px 0 #0A0A0A',
+                }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-[#F5F0E8]">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"/>
+                  <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"/>
+                </svg>
+              </div>
+              <span className="text-[#0A0A0A] font-bold text-xl tracking-tight" style={{ fontFamily: "'Syne', sans-serif" }}>
+                SOEGIH
               </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="relative z-10">
-          <p className="text-xs text-slate-600">© 2026 Soegih. All rights reserved.</p>
-        </div>
-      </div>
-
-      {/* ── Right panel – form ─────────────────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-[400px]">
-          {/* Mobile brand */}
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-7 h-7 rounded-lg bg-violet-600 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <span className="text-white font-bold text-lg tracking-tight">Soegih</span>
-          </div>
-
-          {/* Card */}
-          <div className="rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-sm p-8 shadow-[0_0_80px_rgba(139,92,246,0.06)]">
-            <div className="mb-7">
-              <h1 className="text-2xl font-bold text-white tracking-tight mb-1">{heading}</h1>
-              <p className="text-sm text-slate-500">{subheading}</p>
             </div>
 
-            {children}
+            {/* Hero copy */}
+            <div className="space-y-6">
+              <div
+                className="inline-block px-3 py-1 text-xs font-semibold tracking-widest uppercase"
+                style={{ background: '#0A0A0A', color: '#F5F0E8', letterSpacing: '0.15em' }}
+              >
+                Personal Finance
+              </div>
+              <h2
+                className="text-5xl leading-[1.05] text-[#0A0A0A]"
+                style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}
+              >
+                Know where<br />every rupiah<br />goes.
+              </h2>
+              <p className="text-[#3D3D3D] text-base leading-relaxed max-w-[280px]">
+                Track wallets, categorize spending, and parse transactions with AI — all in one place.
+              </p>
+
+              {/* Feature list with hard-border tags */}
+              <div className="flex flex-wrap gap-2 pt-2">
+                {['Wallets', 'Categories', 'AI Chat', 'Dashboard'].map((f) => (
+                  <span
+                    key={f}
+                    className="text-xs font-semibold uppercase tracking-wider px-3 py-1.5"
+                    style={{
+                      border: '2px solid #0A0A0A',
+                      boxShadow: '2px 2px 0 #0A0A0A',
+                      background: '#F5F0E8',
+                      color: '#0A0A0A',
+                      letterSpacing: '0.08em',
+                    }}
+                  >
+                    {f}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <p className="text-xs text-[#888] font-medium tracking-widest uppercase">
+              © 2026 Soegih
+            </p>
           </div>
 
-          <div className="mt-5 text-center">
-            {footer}
+          {/* ── Right panel – form ──────────────────────────────────── */}
+          <div className="flex-1 flex items-center justify-center p-6 lg:p-16">
+            <div className="w-full max-w-[420px]">
+              {/* Mobile brand */}
+              <div className="flex items-center gap-3 mb-10 lg:hidden">
+                <div
+                  className="w-8 h-8 flex items-center justify-center"
+                  style={{ background: '#0A0A0A', border: '2px solid #0A0A0A', boxShadow: '3px 3px 0 #0A0A0A' }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-[#F5F0E8]">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"/>
+                    <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"/>
+                  </svg>
+                </div>
+                <span className="text-[#0A0A0A] font-bold text-lg" style={{ fontFamily: "'Syne', sans-serif" }}>
+                  SOEGIH
+                </span>
+              </div>
+
+              {/* Form card */}
+              <div
+                style={{
+                  background: '#FDFAF4',
+                  border: '3px solid #0A0A0A',
+                  boxShadow: '6px 6px 0 #0A0A0A',
+                }}
+              >
+                {/* Card header stripe */}
+                <div
+                  className="px-8 py-5"
+                  style={{ borderBottom: '3px solid #0A0A0A', background: '#0A0A0A' }}
+                >
+                  <h1
+                    className="text-xl text-[#F5F0E8] uppercase tracking-wider"
+                    style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}
+                  >
+                    {heading}
+                  </h1>
+                  <p className="text-xs text-[#999] mt-0.5 tracking-wide">{subheading}</p>
+                </div>
+
+                {/* Form body */}
+                <div className="px-8 py-7">
+                  {children}
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="mt-5 text-center">{footer}</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

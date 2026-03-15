@@ -16,7 +16,7 @@ export function AuthShell({ heading, subheading, children, footer }: AuthShellPr
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap"
         rel="stylesheet"
       />
-      <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-base-200">
+      <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-base-200" data-theme="light">
         <div className="w-full max-w-[400px]">
           {/* Brand */}
           <div className="mb-8 flex items-center gap-2.5">

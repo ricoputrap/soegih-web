@@ -37,6 +37,7 @@ export default {
         },
       },
     ],
-    darkMode: false,
+    darkMode: ["class", "light"],
+    defaultTheme: "light",
   },
 }

@@ -834,7 +834,7 @@ git commit -m "feat(auth): implement login and signup forms"
 
 The JWT is in-memory. On page refresh it is lost — the user gets bounced to `/login`. Fix: persist the token in `localStorage`, restore it on app load, and verify it via `GET /api/v1/auth/me`.
 
-- [ ] **Step 1: Write test for me service**
+- [x] **Step 1: Write test for me service**
 
 ```typescript
 // src/modules/auth/services/me.service.test.ts
@@ -854,9 +854,9 @@ describe('getMe', () => {
 })
 ```
 
-- [ ] **Step 2: Run test — expect FAIL**
+- [x] **Step 2: Run test — expect FAIL**
 
-- [ ] **Step 3: Implement me service**
+- [x] **Step 3: Implement me service**
 
 ```typescript
 // src/modules/auth/services/me.service.ts
@@ -869,9 +869,9 @@ export async function getMe(): Promise<AuthUser> {
 }
 ```
 
-- [ ] **Step 4: Run test — expect PASS**
+- [x] **Step 4: Run test — expect PASS**
 
-- [ ] **Step 5: Update token-store to also persist to localStorage**
+- [x] **Step 5: Update token-store to also persist to localStorage**
 
 ```typescript
 // src/shared/lib/token-store.ts
@@ -895,7 +895,7 @@ export function clearToken(): void {
 
 > Note: `localStorage` is a valid choice per spec section 2.4 ("localStorage or in-memory"). Using it here survives page refresh.
 
-- [ ] **Step 6: Update `AuthProvider` to restore session on mount**
+- [x] **Step 6: Update `AuthProvider` to restore session on mount**
 
 In `auth-context.tsx`, add a `useEffect` that runs once on mount: if a token exists in the store, call `getMe()` and populate user state. If the call fails (token expired), call `clearAuth()`.
 
@@ -914,13 +914,13 @@ useEffect(() => {
 }, []) // runs once on mount
 ```
 
-- [ ] **Step 7: Verify session persists across page refresh in browser**
+- [x] **Step 7: Verify session persists across page refresh in browser**
 
 1. Log in via `/login`
 2. Hard-refresh the page (`Ctrl+R` / `Cmd+R`)
 3. Expect: user stays on `/dashboard`, not redirected to `/login`
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/modules/auth/services/me.service.ts src/modules/auth/services/me.service.test.ts
@@ -941,7 +941,7 @@ git commit -m "feat(auth): persist JWT in localStorage and restore session on pa
 - Create: `src/routes/_auth/ai.tsx` (placeholder)
 - Modify: `src/routes/_auth.tsx`
 
-- [ ] **Step 1: Use `/frontend-design` skill to design and implement `AppLayout` and `Sidebar`**
+- [x] **Step 1: Use `/frontend-design` skill to design and implement `AppLayout` and `Sidebar`**
 
   Invoke `/frontend-design` with this context:
   - Desktop-first sidebar layout, collapsible on mobile
@@ -949,7 +949,7 @@ git commit -m "feat(auth): persist JWT in localStorage and restore session on pa
   - User info at bottom + logout button
   - Clean, modern finance app aesthetic
 
-- [ ] **Step 2: Create placeholder routes for all auth-protected pages**
+- [x] **Step 2: Create placeholder routes for all auth-protected pages**
 
 ```typescript
 // src/routes/_auth/wallets.tsx
@@ -961,7 +961,7 @@ export const Route = createFileRoute('/_auth/wallets')({
 
 Repeat for `categories.tsx`, `transactions.tsx`, `ai.tsx`.
 
-- [ ] **Step 3: Update `_auth.tsx` layout to render AppLayout around Outlet**
+- [x] **Step 3: Update `_auth.tsx` layout to render AppLayout around Outlet**
 
 ```typescript
 // src/routes/_auth.tsx
@@ -981,9 +981,9 @@ export const Route = createFileRoute('/_auth')({
 })
 ```
 
-- [ ] **Step 4: Verify full shell renders with all nav links**
+- [x] **Step 4: Verify full shell renders with all nav links**
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/shared/components/ src/routes/_auth/ src/routes/_auth.tsx

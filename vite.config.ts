@@ -11,6 +11,9 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] }),
   ],
+  server: {
+    port: 5174,
+  },
   test: {
     environment: "jsdom",
     setupFiles: ["./src/test-setup.ts"],

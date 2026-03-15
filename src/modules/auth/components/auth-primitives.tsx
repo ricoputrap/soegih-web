@@ -12,14 +12,8 @@ export function Field({
   children: ReactNode;
 }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-      <label
-        style={{
-          fontWeight: 500,
-          fontSize: "14px",
-          color: "#111827",
-        }}
-      >
+    <div className="flex flex-col gap-1.5">
+      <label className="font-medium text-sm text-gray-900 self-start">
         {label}
       </label>
       {children}
@@ -27,7 +21,7 @@ export function Field({
         <p
           id={errorId}
           role="alert"
-          style={{ fontSize: "12px", color: "#DC2626", margin: 0 }}
+          className="text-xs text-red-600 m-0 self-start"
         >
           {error}
         </p>
@@ -43,19 +37,9 @@ export function AuthInput(
   return (
     <input
       {...rest}
-      style={{
-        width: "100%",
-        boxSizing: "border-box",
-        backgroundColor: "#FFFFFF",
-        color: "#111827",
-        border: hasError ? "1px solid #DC2626" : "1px solid #E5E7EB",
-        borderRadius: "8px",
-        padding: "10px 14px",
-        fontSize: "14px",
-        outline: "none",
-        transition: "border-color 0.15s, box-shadow 0.15s",
-        fontFamily: "inherit",
-      }}
+      className={`w-full bg-white text-gray-900 rounded-lg px-3.5 py-2.5 text-sm transition-colors duration-150 outline-none ${
+        hasError ? "border border-red-600" : "border border-gray-200"
+      } focus:border-teal-600 focus:ring-1 focus:ring-teal-100`}
     />
   );
 }
@@ -73,20 +57,11 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={loading}
-      className="w-full font-medium flex items-center justify-center gap-2"
-      style={{
-        background: "#2D7A7F",
-        color: "#FFFFFF",
-        borderRadius: "8px",
-        padding: "11px 20px",
-        fontSize: "14px",
-        border: "none",
-        cursor: loading ? "not-allowed" : "pointer",
-        opacity: loading ? 0.7 : 1,
-        transition: "opacity 0.15s, background 0.15s",
-        fontFamily: "inherit",
-        fontWeight: 500,
-      }}
+      className={`w-full font-medium flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm text-white transition-all duration-150 ${
+        loading
+          ? "bg-teal-600 opacity-70 cursor-not-allowed"
+          : "bg-teal-600 hover:bg-teal-700 cursor-pointer"
+      }`}
     >
       {loading ? (
         <>

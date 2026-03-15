@@ -40,7 +40,7 @@ export function WalletTable({
 }: WalletTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
 
   const columnHelper = createColumnHelper<Wallet>();
 
@@ -60,22 +60,26 @@ export function WalletTable({
     columnHelper.accessor("type", {
       header: "Type",
       cell: (info) => (
-        <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-          {walletTypeLabels[info.getValue()] || info.getValue()}
-        </span>
+        <div className="text-left">
+          <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+            {walletTypeLabels[info.getValue()] || info.getValue()}
+          </span>
+        </div>
       ),
       sortingFn: "text",
     }),
     columnHelper.accessor("balance", {
       header: "Balance",
       cell: (info) => (
-        <span className="font-mono font-semibold text-gray-900">
-          {new Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR",
-            minimumFractionDigits: 0,
-          }).format(parseFloat(info.getValue()))}
-        </span>
+        <div className="text-left">
+          <span className="font-mono font-semibold text-gray-900">
+            {new Intl.NumberFormat("id-ID", {
+              style: "currency",
+              currency: "IDR",
+              minimumFractionDigits: 0,
+            }).format(parseFloat(info.getValue()))}
+          </span>
+        </div>
       ),
       sortingFn: (a, b) =>
         parseFloat(a.original.balance) - parseFloat(b.original.balance),

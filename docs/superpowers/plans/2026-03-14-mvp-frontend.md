@@ -353,7 +353,7 @@ git commit -m "feat(setup): initialize Sentry for error tracking"
 - Create: `src/modules/auth/services/auth.service.ts`
 - Create: `src/modules/auth/services/auth.service.test.ts`
 
-- [ ] **Step 1: Define auth types**
+- [x] **Step 1: Define auth types**
 
 ```typescript
 // src/modules/auth/types/auth.types.ts
@@ -376,7 +376,7 @@ export interface AuthResponse {
 }
 ```
 
-- [ ] **Step 2: Write tests for auth service**
+- [x] **Step 2: Write tests for auth service**
 
 ```typescript
 // src/modules/auth/services/auth.service.test.ts
@@ -418,13 +418,13 @@ describe('logout', () => {
 })
 ```
 
-- [ ] **Step 3: Run tests — expect FAIL**
+- [x] **Step 3: Run tests — expect FAIL**
 
 ```bash
 pnpm test
 ```
 
-- [ ] **Step 4: Implement auth service**
+- [x] **Step 4: Implement auth service**
 
 ```typescript
 // src/modules/auth/services/auth.service.ts
@@ -446,13 +446,13 @@ export async function logout(): Promise<void> {
 }
 ```
 
-- [ ] **Step 5: Run tests — expect PASS**
+- [x] **Step 5: Run tests — expect PASS**
 
 ```bash
 pnpm test
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/modules/auth/
@@ -467,7 +467,7 @@ git commit -m "feat(auth): add auth types and service"
 - Create: `src/shared/lib/token-store.ts`
 - Create: `src/shared/lib/token-store.test.ts`
 
-- [ ] **Step 1: Write tests for token store**
+- [x] **Step 1: Write tests for token store**
 
 ```typescript
 // src/shared/lib/token-store.test.ts
@@ -488,9 +488,9 @@ describe('token-store', () => {
 })
 ```
 
-- [ ] **Step 2: Run tests — expect FAIL**
+- [x] **Step 2: Run tests — expect FAIL**
 
-- [ ] **Step 3: Implement token store**
+- [x] **Step 3: Implement token store**
 
 ```typescript
 // src/shared/lib/token-store.ts
@@ -509,9 +509,9 @@ export function clearToken(): void {
 }
 ```
 
-- [ ] **Step 4: Run tests — expect PASS**
+- [x] **Step 4: Run tests — expect PASS**
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/shared/lib/token-store.ts src/shared/lib/token-store.test.ts
@@ -527,7 +527,7 @@ git commit -m "feat(auth): add in-memory token store"
 - Modify: `src/routes/__root.tsx`
 - Modify: `src/routes/_auth.tsx`
 
-- [ ] **Step 1: Create auth context**
+- [x] **Step 1: Create auth context**
 
 ```typescript
 // src/shared/context/auth-context.tsx
@@ -581,7 +581,7 @@ export function useAuthContext(): AuthContextValue {
 }
 ```
 
-- [ ] **Step 2: Update root route to wrap with AuthProvider**
+- [x] **Step 2: Update root route to wrap with AuthProvider**
 
 ```typescript
 // src/routes/__root.tsx
@@ -602,7 +602,7 @@ export const Route = createRootRoute({
 })
 ```
 
-- [ ] **Step 3: Implement auth layout guard (redirect unauthenticated users)**
+- [x] **Step 3: Implement auth layout guard (redirect unauthenticated users)**
 
 ```typescript
 // src/routes/_auth.tsx
@@ -624,7 +624,7 @@ export const Route = createFileRoute('/_auth')({
 > component: () => <AppLayout><Outlet /></AppLayout>
 > ```
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/shared/context/auth-context.tsx src/routes/__root.tsx src/routes/_auth.tsx
@@ -641,7 +641,7 @@ git commit -m "feat(auth): add auth context and route guard"
 - Modify: `src/routes/login.tsx`
 - Modify: `src/routes/signup.tsx`
 
-- [ ] **Step 1: Implement `LoginForm.tsx`**
+- [x] **Step 1: Implement `LoginForm.tsx`**
 
 ```typescript
 // src/modules/auth/components/LoginForm.tsx
@@ -711,7 +711,7 @@ export function LoginForm() {
 }
 ```
 
-- [ ] **Step 2: Implement `SignupForm.tsx`**
+- [x] **Step 2: Implement `SignupForm.tsx`**
 
 ```typescript
 // src/modules/auth/components/SignupForm.tsx
@@ -791,7 +791,7 @@ export function SignupForm() {
 }
 ```
 
-- [ ] **Step 3: Wire forms into routes**
+- [x] **Step 3: Wire forms into routes**
 
 ```typescript
 // src/routes/login.tsx
@@ -811,9 +811,9 @@ export const Route = createFileRoute('/signup')({
 })
 ```
 
-- [ ] **Step 4: Verify login/signup pages render in browser**
+- [x] **Step 4: Verify login/signup pages render in browser**
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/modules/auth/components/ src/routes/login.tsx src/routes/signup.tsx

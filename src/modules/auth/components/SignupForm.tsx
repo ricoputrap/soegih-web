@@ -46,7 +46,7 @@ export function SignupForm() {
 
   return (
     <AuthShell
-      title="Create account"
+      subtitle="Join Soegih to manage your finances"
       footer={
         <p style={{ fontSize: '14px', color: '#6B7280' }}>
           Already have an account?{' '}

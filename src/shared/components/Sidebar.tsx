@@ -93,19 +93,28 @@ export function Sidebar({ open = true, onClose, isCollapsed = false, onToggleCol
             {mainMenuItems.map((item) => {
               const active = isActive(item.to);
               return (
-                <li key={item.to}>
+                <li key={item.to} className="group relative">
                   <Link
                     to={item.to}
                     onClick={onClose}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
+                    className={`flex items-center justify-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${isCollapsed ? "gap-0" : ""} ${
                       active
                         ? "bg-teal-50 text-teal-700 font-medium border border-teal-200/60"
                         : "text-slate-700 hover:bg-slate-200/50 hover:text-slate-900"
                     }`}
                   >
                     <span className="text-lg w-5">{item.icon}</span>
-                    <span className="text-sm">{item.label}</span>
+                    {!isCollapsed && <span className="text-sm">{item.label}</span>}
                   </Link>
+                  {isCollapsed && (
+                    <div
+                      role="tooltip"
+                      aria-label={item.label}
+                      className="absolute left-20 top-1/2 -translate-y-1/2 ml-2 px-3 py-2 bg-slate-900 text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-none"
+                    >
+                      {item.label}
+                    </div>
+                  )}
                 </li>
               );
             })}

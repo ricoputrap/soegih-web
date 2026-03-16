@@ -12,9 +12,11 @@ const mainMenuItems = [
 interface SidebarProps {
   open?: boolean;
   onClose?: () => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
-export function Sidebar({ open = true, onClose }: SidebarProps) {
+export function Sidebar({ open = true, onClose, isCollapsed = false, onToggleCollapse }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, clearAuth } = useAuthContext();

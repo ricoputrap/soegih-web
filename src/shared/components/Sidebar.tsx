@@ -16,7 +16,12 @@ interface SidebarProps {
   onToggleCollapse?: () => void;
 }
 
-export function Sidebar({ open = true, onClose, isCollapsed = false, onToggleCollapse }: SidebarProps) {
+export function Sidebar({
+  open = true,
+  onClose,
+  isCollapsed = false,
+  onToggleCollapse,
+}: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, clearAuth } = useAuthContext();
@@ -97,14 +102,16 @@ export function Sidebar({ open = true, onClose, isCollapsed = false, onToggleCol
                   <Link
                     to={item.to}
                     onClick={onClose}
-                    className={`flex items-center justify-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${isCollapsed ? "gap-0" : ""} ${
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${isCollapsed ? "gap-0" : ""} ${
                       active
                         ? "bg-teal-50 text-teal-700 font-medium border border-teal-200/60"
                         : "text-slate-700 hover:bg-slate-200/50 hover:text-slate-900"
                     }`}
                   >
                     <span className="text-lg w-5">{item.icon}</span>
-                    {!isCollapsed && <span className="text-sm">{item.label}</span>}
+                    {!isCollapsed && (
+                      <span className="text-sm">{item.label}</span>
+                    )}
                   </Link>
                   {isCollapsed && (
                     <div
@@ -122,7 +129,9 @@ export function Sidebar({ open = true, onClose, isCollapsed = false, onToggleCol
         </nav>
 
         {/* Bottom Section */}
-        <div className={`border-t border-slate-200/80 p-4 bg-slate-50/50 space-y-3 ${isCollapsed ? "flex flex-col items-center" : ""}`}>
+        <div
+          className={`border-t border-slate-200/80 p-4 bg-slate-50/50 space-y-3 ${isCollapsed ? "flex flex-col items-center" : ""}`}
+        >
           {/* Sign Out Button */}
           <div className="group relative">
             <button

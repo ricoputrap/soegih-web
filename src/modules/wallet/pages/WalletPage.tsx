@@ -83,16 +83,41 @@ export function WalletPage() {
         </button>
       </div>
 
-      {/* Table - Always Visible */}
-      <WalletTable
-        wallets={wallets}
-        isLoading={isLoading}
-        onEdit={handleEditWallet}
-        onDelete={(wallet) => setDeleteConfirmWallet(wallet)}
-      />
+      {/* Table - md and above only */}
+      <div className="hidden md:block">
+        <WalletTable
+          wallets={wallets}
+          isLoading={isLoading}
+          onEdit={handleEditWallet}
+          onDelete={(wallet) => setDeleteConfirmWallet(wallet)}
+        />
+      </div>
 
-      {/* Mobile Card Alternative (shown only on very small screens if preferred) */}
-      {/* Currently disabled - table is responsive on all sizes */}
+      {/* Mobile Card Grid - below md only */}
+      <div className="block md:hidden">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-teal-600 rounded-full" />
+          </div>
+        ) : wallets.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+            <p className="text-gray-500 text-sm">
+              No wallets yet. Create one to get started!
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {wallets.map((wallet) => (
+              <WalletCard
+                key={wallet.id}
+                wallet={wallet}
+                onEdit={() => handleEditWallet(wallet)}
+                onDelete={() => setDeleteConfirmWallet(wallet)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Form Modal */}
       <WalletForm

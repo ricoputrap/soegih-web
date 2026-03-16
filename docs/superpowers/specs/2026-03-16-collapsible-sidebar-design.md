@@ -3,6 +3,7 @@
 **Date:** 2026-03-16
 **Status:** Draft
 **Scope:** Desktop sidebar collapse/expand feature
+**Task Number:** [To be determined from docs/implementation_plan_mvp.md]
 
 ---
 
@@ -23,8 +24,10 @@ Enable users to collapse the sidebar to an icon-only bar on desktop view. The si
 
 2. **Icon-only bar display**
    - Menu icons remain visible and centered
-   - Menu labels hidden in collapsed state
+   - Menu labels hidden in collapsed state (conditionally rendered, not CSS hidden)
    - Tooltips appear on hover to show label text
+   - Sign Out button becomes icon-only with tooltip
+   - User email section hides completely
 
 3. **State management**
    - Collapse state starts as `false` (expanded)
@@ -55,9 +58,13 @@ Enable users to collapse the sidebar to an icon-only bar on desktop view. The si
 #### 2. `Sidebar.tsx`
 - Accept new props: `isCollapsed`, `onToggleCollapse`
 - Render toggle button in header (desktop only)
-- Conditional rendering of labels based on `isCollapsed`
-- Add tooltip positioning and styling
+- **Header**: Logo remains visible centered, "Soegih" text hides when collapsed
+- **Navigation items**: Conditional rendering of labels based on `isCollapsed`
+- **Sign Out button**: Becomes icon-only when collapsed, shows tooltip
+- **User email**: Hides completely when collapsed
+- Add tooltip positioning and styling with z-index management
 - Update sidebar width CSS based on collapse state
+- All transitions use consistent 300ms timing
 
 ### Data Flow
 
@@ -148,16 +155,27 @@ interface SidebarProps {
 - Collapsed: `w-20`
 
 **Navigation items:**
-- Base: `flex items-center gap-3`
+- Base: `flex items-center justify-center gap-3 px-3 py-2.5`
 - Collapsed: `justify-center gap-0`
 
 **Labels:**
-- Collapsed: `hidden`
+- Rendered conditionally: `{!isCollapsed && <span>{label}</span>}`
+- Ensures screen readers skip labels when collapsed
 
 **Tooltips:**
-- Position: `absolute left-20 top-1/2 -translate-y-1/2`
-- Visibility: `opacity-0 group-hover:opacity-100 transition-opacity`
-- Appear only when `isCollapsed && collapsed`
+- Position: `absolute left-20 top-1/2 -translate-y-1/2 z-10`
+- Visibility: Rendered conditionally when `isCollapsed`
+- Transition: `opacity-0 group-hover:opacity-100 transition-opacity duration-200`
+- ARIA attributes: `role="tooltip"` and `aria-label` for accessibility
+
+**Sign Out Button:**
+- Base: `w-full flex items-center justify-center gap-2`
+- Collapsed: `w-full flex items-center justify-center` (icon-only)
+- Label hides when collapsed: `{!isCollapsed && <span>Sign Out</span>}`
+
+**User Email Section:**
+- Base: visible
+- Collapsed: `hidden` (display: none)
 
 ---
 
@@ -195,19 +213,31 @@ interface SidebarProps {
 ### Unit Tests
 - Sidebar component renders with `isCollapsed` prop
 - Toggle button calls `onToggleCollapse` on click
-- Labels hidden/shown based on `isCollapsed`
+- Labels hidden/shown based on `isCollapsed` (conditional render, not CSS)
 - Toggle button visible on desktop (`lg:` breakpoint)
+- Sign Out button text hides when collapsed
+- User email section hides when collapsed
+- Tooltips have `role="tooltip"` and `aria-label` attributes
+- Toggle button has `aria-label="Toggle sidebar"`
 
 ### Integration Tests
 - AppLayout state updates when toggle clicked
-- Sidebar width changes on state change
+- Sidebar width changes from 256px to 80px on state change
 - Mobile and desktop behavior independent
+- Responsive breakpoint behavior at exactly `lg:` boundary
+
+### Accessibility Tests
+- Screen readers skip labels when collapsed (conditional rendering)
+- Tooltips are screen-reader accessible (ARIA attributes)
+- Toggle button is keyboard accessible
 
 ### Manual Testing
 - Visual: width transition smooth (300ms)
-- Hover: tooltips appear/disappear correctly
+- Hover: tooltips appear/disappear correctly and are readable
 - Responsive: behavior correct at `lg:` breakpoint
 - Mobile: sidebar toggle behavior unchanged
+- Icon alignment: icons centered in 80px collapsed state
+- Logo: remains centered, text hides when collapsed
 
 ---
 
@@ -221,12 +251,18 @@ interface SidebarProps {
 ## Acceptance Criteria
 
 - ✅ Sidebar collapses to 80px icon-only bar on desktop
-- ✅ Toggle button in sidebar header (desktop only)
-- ✅ Smooth CSS transition (300ms)
-- ✅ Tooltips show on hover when collapsed
-- ✅ State starts expanded, no persistence
-- ✅ Mobile behavior unchanged
-- ✅ All tests pass
+- ✅ Toggle button in sidebar header (desktop only) with chevron icon
+- ✅ Smooth CSS transition (300ms) for all width/opacity changes
+- ✅ Tooltips show on hover when collapsed with proper z-index
+- ✅ Menu labels conditionally rendered (hidden when collapsed)
+- ✅ Sign Out button becomes icon-only with tooltip when collapsed
+- ✅ User email section hides completely when collapsed
+- ✅ Logo remains visible and centered when collapsed
+- ✅ "Soegih" text hides when collapsed
+- ✅ State starts expanded, no persistence (no localStorage)
+- ✅ Mobile behavior unchanged (hamburger toggle unaffected)
+- ✅ Accessibility: tooltips have ARIA attributes, screen reader friendly
+- ✅ All unit, integration, and accessibility tests pass
 - ✅ No console errors/warnings
 
 ---

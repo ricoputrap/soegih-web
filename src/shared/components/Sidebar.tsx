@@ -122,35 +122,49 @@ export function Sidebar({ open = true, onClose, isCollapsed = false, onToggleCol
         </nav>
 
         {/* Bottom Section */}
-        <div className="border-t border-slate-200/80 p-4 bg-slate-50/50 space-y-3">
+        <div className={`border-t border-slate-200/80 p-4 bg-slate-50/50 space-y-3 ${isCollapsed ? "flex flex-col items-center" : ""}`}>
           {/* Sign Out Button */}
-          <button
-            onClick={handleLogout}
-            data-testid="logout-button"
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 hover:text-red-600 transition-colors duration-200"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="group relative">
+            <button
+              onClick={handleLogout}
+              data-testid="logout-button"
+              className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 hover:text-red-600 transition-colors duration-200 ${isCollapsed ? "w-auto" : "w-full"}`}
+              {...(isCollapsed && { "aria-label": "Sign Out" })}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-            <span>Sign Out</span>
-          </button>
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+              {!isCollapsed && <span>Sign Out</span>}
+            </button>
+            {isCollapsed && (
+              <div
+                role="tooltip"
+                aria-label="Sign Out"
+                className="absolute left-14 top-1/2 -translate-y-1/2 ml-2 px-3 py-2 bg-slate-900 text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-none"
+              >
+                Sign Out
+              </div>
+            )}
+          </div>
 
           {/* User Email */}
-          <div className="px-3 py-2 text-center border-t border-slate-200/60">
-            <div className="text-xs text-slate-500 font-medium">
-              {user?.email}
+          {!isCollapsed && (
+            <div className="px-3 py-2 text-center border-t border-slate-200/60">
+              <div className="text-xs text-slate-500 font-medium">
+                {user?.email}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </aside>
     </>

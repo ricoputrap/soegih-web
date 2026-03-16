@@ -1,5 +1,6 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuthContext } from "../context/auth-context";
+import { logout } from "../../modules/auth/services/auth.service";
 
 const mainMenuItems = [
   { label: "Dashboard", to: "/dashboard", icon: "📊" },
@@ -15,6 +16,7 @@ interface SidebarProps {
 
 export function Sidebar({ open = true, onClose }: SidebarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, clearAuth } = useAuthContext();
 
   const isActive = (to: string) => {
@@ -24,7 +26,14 @@ export function Sidebar({ open = true, onClose }: SidebarProps) {
   };
 
   const handleLogout = async () => {
-    clearAuth();
+    try {
+      await logout();
+    } catch {
+      // ignore — clear locally regardless
+    } finally {
+      clearAuth();
+      navigate({ to: "/login" });
+    }
   };
 
   return (

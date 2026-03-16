@@ -50,20 +50,41 @@ export function Sidebar({ open = true, onClose, isCollapsed = false, onToggleCol
 
       {/* Sidebar */}
       <aside
-        className={`flex flex-col fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-slate-50 to-slate-100 border-r border-slate-200 shadow-sm transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${
+        className={`flex flex-col fixed left-0 top-0 h-screen bg-gradient-to-b from-slate-50 to-slate-100 border-r border-slate-200 shadow-sm transition-all duration-300 z-50 lg:relative lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
-        }`}
+        } ${isCollapsed ? "w-20" : "w-64"}`}
       >
         {/* Header */}
-        <div className="p-6 border-b border-slate-200/80">
+        <div className="p-6 border-b border-slate-200/80 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center font-bold text-sm text-white shadow-md">
               S
             </div>
-            <span className="text-lg font-semibold tracking-tight text-slate-900">
-              Soegih
-            </span>
+            {!isCollapsed && (
+              <span className="text-lg font-semibold tracking-tight text-slate-900">
+                Soegih
+              </span>
+            )}
           </div>
+          <button
+            onClick={onToggleCollapse}
+            className="hidden lg:flex items-center justify-center w-6 h-6 text-slate-600 hover:bg-slate-200/50 rounded transition-colors"
+            aria-label="Toggle sidebar"
+          >
+            <svg
+              className={`w-5 h-5 transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
         </div>
 
         {/* Navigation */}
